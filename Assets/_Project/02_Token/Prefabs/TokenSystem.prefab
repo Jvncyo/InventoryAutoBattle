@@ -153,7 +153,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InventoryAutoBattle.Token.TokenSpawner
   tokenTray: {fileID: 6997633265736160409}
-  tokenPrefab: {fileID: 0}
+  tokenPrefab: {fileID: 1000000000000001, guid: 781a943729e1f4041b65825de70123ef, type: 3}
   spawnInterval: 1.8
   maxTokens: 5
   autoStartInBattle: 1

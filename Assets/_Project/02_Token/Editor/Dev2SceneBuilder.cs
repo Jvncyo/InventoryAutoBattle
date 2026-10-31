@@ -122,10 +122,18 @@ namespace InventoryAutoBattle.Token.Editor
             trayHlg.childControlWidth = false;
             trayHlg.childControlHeight = false;
 
-            // TokenSpawner 컴포넌트 추가
+            // 8-1. 토큰 프리팹 생성 및 저장 (Assets/_Project/02_Token/Prefabs/TokenItem.prefab)
+            GameObject tokenPrefabObj = CreateTokenPrefabObject();
+            string tokenPrefabPath = "Assets/_Project/02_Token/Prefabs/TokenItem.prefab";
+            GameObject tokenPrefab = PrefabUtility.SaveAsPrefabAsset(tokenPrefabObj, tokenPrefabPath);
+            Object.DestroyImmediate(tokenPrefabObj);
+            Debug.Log($"[Dev2SceneBuilder] TokenItem 프리팹 생성 완료: {tokenPrefabPath}");
+
+            // TokenSpawner 컴포넌트 추가 및 프리팹 연결
             TokenSpawner spawner = tokenSystemRoot.AddComponent<TokenSpawner>();
             var spSerialized = new SerializedObject(spawner);
             spSerialized.FindProperty("tokenTray").objectReferenceValue = trayRt;
+            spSerialized.FindProperty("tokenPrefab").objectReferenceValue = tokenPrefab;
             spSerialized.FindProperty("spawnInterval").floatValue = 1.8f;
             spSerialized.FindProperty("maxTokens").intValue = 5;
             spSerialized.ApplyModifiedProperties();
@@ -325,7 +333,77 @@ namespace InventoryAutoBattle.Token.Editor
             return text;
         }
 
-        private static void CreateTestButton(Transform parent, string name, string label, UnityEngine.Events.UnityAction onClick)
+        private static GameObject CreateTokenPrefabObject()
+        {
+            GameObject tokenObj = new GameObject("TokenItem", typeof(RectTransform), typeof(CanvasGroup), typeof(Image), typeof(TokenInstance));
+            RectTransform rt = tokenObj.GetComponent<RectTransform>();
+            rt.sizeDelta = new Vector2(85, 85);
+
+            Image bg = tokenObj.GetComponent<Image>();
+            bg.color = new Color(0.85f, 0.25f, 0.25f, 0.95f);
+            bg.raycastTarget = true;
+
+            // 1. 타이머 원형/슬라이스 게이지 (외곽 테두리)
+            GameObject fillObj = new GameObject("TimerFill", typeof(RectTransform), typeof(Image));
+            fillObj.transform.SetParent(tokenObj.transform, false);
+            Image fillImg = fillObj.GetComponent<Image>();
+            fillImg.color = new Color(1f, 1f, 1f, 0.4f);
+            fillImg.type = Image.Type.Filled;
+            fillImg.fillMethod = Image.FillMethod.Radial360;
+            fillImg.fillOrigin = (int)Image.Origin360.Top;
+            fillImg.fillClockwise = true;
+            fillImg.raycastTarget = false;
+            RectTransform fillRt = fillObj.GetComponent<RectTransform>();
+            fillRt.anchorMin = Vector2.zero;
+            fillRt.anchorMax = Vector2.one;
+            fillRt.offsetMin = Vector2.zero;
+            fillRt.offsetMax = Vector2.zero;
+
+            // 2. 토큰 이름/아이콘 텍스트
+            GameObject nameObj = new GameObject("Text_Name", typeof(RectTransform), typeof(Text));
+            nameObj.transform.SetParent(tokenObj.transform, false);
+            Text nameTxt = nameObj.GetComponent<Text>();
+            nameTxt.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            nameTxt.alignment = TextAnchor.MiddleCenter;
+            nameTxt.color = Color.white;
+            nameTxt.fontSize = 13;
+            nameTxt.fontStyle = FontStyle.Bold;
+            nameTxt.raycastTarget = false;
+            nameTxt.text = "⚔️ 공격";
+            RectTransform nameRt = nameObj.GetComponent<RectTransform>();
+            nameRt.anchorMin = new Vector2(0, 0.35f);
+            nameRt.anchorMax = Vector2.one;
+            nameRt.offsetMin = Vector2.zero;
+            nameRt.offsetMax = Vector2.zero;
+
+            // 3. 타이머 남은 초 텍스트
+            GameObject timeObj = new GameObject("Text_Timer", typeof(RectTransform), typeof(Text));
+            timeObj.transform.SetParent(tokenObj.transform, false);
+            Text timeTxt = timeObj.GetComponent<Text>();
+            timeTxt.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            timeTxt.alignment = TextAnchor.MiddleCenter;
+            timeTxt.color = new Color(1f, 0.9f, 0.2f);
+            timeTxt.fontSize = 12;
+            timeTxt.raycastTarget = false;
+            timeTxt.text = "5.0s";
+            RectTransform timeRt = timeObj.GetComponent<RectTransform>();
+            timeRt.anchorMin = Vector2.zero;
+            timeRt.anchorMax = new Vector2(1, 0.35f);
+            timeRt.offsetMin = Vector2.zero;
+            timeRt.offsetMax = Vector2.zero;
+
+            var ti = tokenObj.GetComponent<TokenInstance>();
+            var tiSerialized = new SerializedObject(ti);
+            tiSerialized.FindProperty("bgImage").objectReferenceValue = bg;
+            tiSerialized.FindProperty("timerFillImage").objectReferenceValue = fillImg;
+            tiSerialized.FindProperty("nameText").objectReferenceValue = nameTxt;
+            tiSerialized.FindProperty("timerText").objectReferenceValue = timeTxt;
+            tiSerialized.ApplyModifiedProperties();
+
+            return tokenObj;
+        }
+
+        private static GameObject CreateTestButton(Transform parent, string name, string label, UnityEngine.Events.UnityAction onClick)
         {
             GameObject btnObj = CreateUIObject(name, parent);
             Image img = btnObj.AddComponent<Image>();
@@ -341,6 +419,7 @@ namespace InventoryAutoBattle.Token.Editor
 
             Text t = CreateText(btnObj.transform, "Label", label, 14, TextAnchor.MiddleCenter, Color.white);
             SetStretch(t.rectTransform);
+            return btnObj;
         }
     }
 }
