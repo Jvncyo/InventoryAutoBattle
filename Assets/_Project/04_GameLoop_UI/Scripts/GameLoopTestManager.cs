@@ -75,8 +75,8 @@ namespace InventoryAutoBattle.GameLoop
             {
                 if (gameManager != null && gameManager.CurrentState == GameState.Ready)
                 {
-                    AddLog("⌨️ Space키 입력: 전투 시작 트리거");
-                    GameEvents.TriggerBattleStart();
+                    AddLog("⌨️ Space키 입력: 전투 시작");
+                    gameManager.StartBattle();
                 }
             }
         }

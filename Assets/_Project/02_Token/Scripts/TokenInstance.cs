@@ -17,6 +17,7 @@ namespace InventoryAutoBattle.Token
         [Header("토큰 데이터")]
         [SerializeField] private TokenData tokenData;
         public TokenData Data => tokenData;
+        public bool IsDragging => isDragging;
 
         [Header("UI 컴포넌트")]
         [SerializeField] private Image bgImage;
@@ -165,6 +166,11 @@ namespace InventoryAutoBattle.Token
         {
             if (isExpired) return;
             isExpired = true;
+
+            if (isDragging && canvasGroup != null)
+            {
+                canvasGroup.blocksRaycasts = true;
+            }
 
             Debug.Log($"[TokenInstance] ⌛ 토큰 '{tokenData?.tokenName ?? "Token"}' 시간 만료로 소멸!");
             StartCoroutine(ExpireFadeOutRoutine());
