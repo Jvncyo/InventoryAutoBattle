@@ -83,11 +83,11 @@ namespace InventoryAutoBattle.Inventory
             img.color = color;
 
             InventoryItem item = itemObj.AddComponent<InventoryItem>();
-            item.Initialize(data);
+            item.Initialize(data, inventoryGrid);
 
             if (inventoryGrid.CanPlaceItem(item, gridPos, data.size))
             {
-                inventoryGrid.PlaceItem(item, gridPos, data.size);
+                inventoryGrid.PlaceItemAt(item, gridPos);
             }
             else
             {
