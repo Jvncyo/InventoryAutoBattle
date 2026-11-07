@@ -16,8 +16,8 @@ MonoBehaviour:
   DisplayName: Shield
   ItemType: 0
   Rarity: 0
-  Width: 1
-  Height: 1
+  Width: 2
+  Height: 2
   Icon: {fileID: 0}
   BaseCooldown: 4
   BaseDamage: 0

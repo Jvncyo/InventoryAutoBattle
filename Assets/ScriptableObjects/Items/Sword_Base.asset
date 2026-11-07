@@ -17,7 +17,7 @@ MonoBehaviour:
   ItemType: 0
   Rarity: 0
   Width: 1
-  Height: 1
+  Height: 2
   Icon: {fileID: 0}
   BaseCooldown: 3
   BaseDamage: 8

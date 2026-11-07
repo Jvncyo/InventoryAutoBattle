@@ -135,8 +135,8 @@ public class PhaseETests
         sword.CooldownMultiplier = 0.6f;
         var attack = Place("token_attack", 2, 0);
         var heal = Place("token_heal", 4, 0);
-        var damage = Place("token_directdamage", 0, 1);
-        var shield = Place("item_shield", 0, 2);
+        var damage = Place("token_directdamage", 2, 1);
+        var shield = Place("item_shield", 3, 3);
 
         _player.Initialize(100f, 80f);
 
@@ -161,8 +161,8 @@ public class PhaseETests
         Assert.AreEqual(0.6f, restoredSword.CooldownMultiplier, 0.01f);
         Assert.AreEqual("token_attack", _inventory.GetItemAt(2, 0).Data.Id);
         Assert.AreEqual("token_heal", _inventory.GetItemAt(4, 0).Data.Id);
-        Assert.AreEqual("token_directdamage", _inventory.GetItemAt(0, 1).Data.Id);
-        Assert.AreEqual("item_shield", _inventory.GetItemAt(0, 2).Data.Id);
+        Assert.AreEqual("token_directdamage", _inventory.GetItemAt(2, 1).Data.Id);
+        Assert.AreEqual("item_shield", _inventory.GetItemAt(3, 3).Data.Id);
     }
 
     [Test]
