@@ -207,4 +207,24 @@ public class ItemContainerView : MonoBehaviour
             }
         return false;
     }
+
+    public IEnumerable<CellSlotView> GetAffectedSlots(Vector2 screenPoint, int width, int height)
+    {
+        if (!ScreenPointToGrid(screenPoint, out int x, out int y)) yield break;
+        for (int iy = y; iy < y + height; iy++)
+        {
+            for (int ix = x; ix < x + width; ix++)
+            {
+                if (ix >= 0 && ix < container.Width && iy >= 0 && iy < container.Height)
+                    yield return _slots[ix, iy];
+            }
+        }
+    }
+
+    public void ResetAllHighlights()
+    {
+        if (_slots == null) return;
+        foreach (var slot in _slots)
+            if (slot != null) slot.SetHighlight(false);
+    }
 }

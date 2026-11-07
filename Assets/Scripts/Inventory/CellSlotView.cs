@@ -20,6 +20,12 @@ public class CellSlotView : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         if (backgroundImage == null) backgroundImage = GetComponent<Image>();
     }
 
+    public void SetHighlight(bool active)
+    {
+        if (backgroundImage != null)
+            backgroundImage.color = active ? highlightColor : normalColor;
+    }
+
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (backgroundImage != null)
