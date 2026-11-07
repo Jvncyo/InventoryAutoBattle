@@ -1,0 +1,42 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+public enum ItemType { Equipment, Token }
+public enum TokenType { None, Attack, Defense, Utility, Heal, DirectDamage, ImmediateDefense }
+public enum TokenCategory { Enhancement, Combat }
+public enum Rarity { Common, Rare, Epic, Legendary }
+public enum TriggerType { OnCooldown, OnHit, OnDamaged }
+
+[System.Serializable]
+public struct EquipmentTrigger
+{
+    public TriggerType Type;
+    public float Value;
+    public float Cooldown;
+}
+
+[CreateAssetMenu(fileName = "Item_", menuName = "Roguelike/Item Data")]
+public class ItemDataSO : ScriptableObject
+{
+    [Header("Universal Properties")]
+    public string Id;
+    public string DisplayName;
+    public ItemType ItemType;
+    public Rarity Rarity;
+    [Range(1, 4)] public int Width = 1;
+    [Range(1, 4)] public int Height = 1;
+    public Sprite Icon;
+
+    [Header("Equipment Exclusive (ItemType == Equipment)")]
+    public float BaseCooldown = 3.0f;
+    public float BaseDamage = 0f;
+    public float BaseShield = 0f;
+    public float BaseHeal = 0f;
+    public List<EquipmentTrigger> Triggers = new();
+    public List<TokenType> AcceptableTokens = new();
+
+    [Header("Token Exclusive (ItemType == Token)")]
+    public TokenCategory TokenCategory = TokenCategory.Enhancement;
+    public TokenType TokenType = TokenType.None;
+    public TokenEffectSO TokenEffect;
+}
