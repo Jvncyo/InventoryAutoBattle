@@ -24,5 +24,8 @@ public class PlayerCombatActor : CombatActor
         if (MaxHP <= 0f) MaxHP = 100f;
         CurrentHP = MaxHP;
         Shield = 0f;
+        
+        // 전투 비주얼 리셋 (애니메이션 상태 초기화)
+        ResetCombatVisuals();
     }
 }

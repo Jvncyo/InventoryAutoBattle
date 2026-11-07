@@ -206,6 +206,13 @@ public class RunStateMachine : MonoBehaviour
             case RunState.Preparation:
                 rewardManager?.ClearTokenTray();
                 combatManager?.PlayerActor?.ResetForNewWave();
+                
+                // 사망한 액터의 애니메이션 상태 리셋 (Die → Idle)
+                if (combatManager?.PlayerActor?.IsDead == true)
+                    combatManager.PlayerActor.ResetCombatVisuals();
+                if (combatManager?.EnemyActor?.IsDead == true)
+                    combatManager.EnemyActor.ResetCombatVisuals();
+                
                 if (prev == RunState.RewardToken)
                 {
                     if (_save != null && !_save.TrySave(waveManager.CurrentWave, combatManager.PlayerActor, playerInventory))

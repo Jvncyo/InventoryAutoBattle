@@ -91,6 +91,13 @@ public class CombatManager : MonoBehaviour
         if (!playerActor.IsDead && !enemyActor.IsDead) return false;
         _inCombat = false;
         EventBus.Publish(new CombatEndedEvent(!playerActor.IsDead));
+        
+        // 사망 애니메이션 트리거
+        if (playerActor.IsDead)
+            EventBus.Publish(new CombatActionEvent(playerActor.gameObject, CombatActionType.Die));
+        if (enemyActor.IsDead)
+            EventBus.Publish(new CombatActionEvent(enemyActor.gameObject, CombatActionType.Die));
+        
         return true;
     }
 
@@ -105,5 +112,8 @@ public class CombatManager : MonoBehaviour
         if (eq.Data.BaseHeal > 0f) playerActor.Heal(eq.Data.BaseHeal);
 
         EventBus.Publish(new EquipmentTriggeredEvent(eq));
+        
+        // 장비 공격 애니메이션 트리거
+        EventBus.Publish(new CombatActionEvent(playerActor.gameObject, CombatActionType.Attack));
     }
 }

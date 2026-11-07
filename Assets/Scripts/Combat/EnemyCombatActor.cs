@@ -18,6 +18,9 @@ public class EnemyCombatActor : CombatActor
         CurrentHP = MaxHP;
         Shield = 0f;
         _attackTimer = data.AttackInterval / Mathf.Max(0.01f, speedMultiplier);
+        
+        // 전투 비주얼 리셋 (새 적 스폰 시 애니메이션 상태 초기화)
+        ResetCombatVisuals();
     }
 
     public void Tick(float delta, PlayerCombatActor target)
@@ -26,6 +29,10 @@ public class EnemyCombatActor : CombatActor
         if (_attackTimer <= 0f)
         {
             float damage = _data.AttackPower * _attackMultiplier;
+            
+            // 적 공격 애니메이션 트리거
+            EventBus.Publish(new CombatActionEvent(gameObject, CombatActionType.Attack));
+            
             target.TakeDamage(damage);
             _attackTimer = _data.AttackInterval;
             EventBus.Publish(new EnemyAttackedEvent(damage));

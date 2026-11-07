@@ -109,8 +109,24 @@ public class ItemView : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
             view.ResetAllHighlights();
 
         RestoreDragState();
-        // ... (이하 동일)
 
+        // 1. CombatTokenDropTarget (HP 바) 드롭 체크 - 즉시 사용 토큰 처리
+        if (ItemInstance.Data.ItemType == ItemType.Token && ItemInstance.Data.TokenCategory == TokenCategory.Combat)
+        {
+            foreach (var target in FindObjectsByType<CombatTokenDropTarget>(FindObjectsSortMode.None))
+            {
+                if (target.Contains(eventData.position, ContainerView.EventCamera))
+                {
+                    if (TokenUseService.TryUse(ItemInstance, null, target.Actor))
+                    {
+                        return; // 성공 시 종료 (토큰 소모됨)
+                    }
+                    break; // 타겟은 찾았으나 사용 실패 시 아래 로직으로 fallback
+                }
+            }
+        }
+
+        // 2. 기존 그리드 기반 드롭 처리 (장비 강화, 이동 등)
         var handler = UniversalDragDropHandler.Instance;
         if (handler == null)
         {

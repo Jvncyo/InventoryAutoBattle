@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public static class TokenUseService
@@ -22,7 +23,12 @@ public static class TokenUseService
         var inventory = GameManager.Instance != null ? GameManager.Instance.PlayerInventory : null;
         if (token.Data.TokenCategory == TokenCategory.Combat)
         {
-            if (token.CurrentContainer != inventory || !(token.Data.TokenEffect is CombatTokenEffectSO effect))
+            // 드래그 중에는 CurrentContainer가 임시로 바뀔 수 있으므로, 
+            // 인벤토리에 속해 있었거나 현재 인벤토리에 있으면 허용
+            bool wasInInventory = inventory != null && 
+                (token.CurrentContainer == inventory || 
+                 inventory.Items.Contains(token));
+            if (!wasInInventory || !(token.Data.TokenEffect is CombatTokenEffectSO effect))
             { message = "Move combat tokens into your inventory first."; return false; }
             return effect.CanApply(actor, out message);
         }
@@ -49,7 +55,20 @@ public static class TokenUseService
                 ? ((CombatTokenEffectSO)token.Data.TokenEffect).ApplyToActor(actor)
                 : token.Data.TokenEffect.ApplyToEquipment(equipment);
             if (!applied) return false;
-            token.CurrentContainer.RemoveItem(token);
+
+            var inventory = GameManager.Instance != null ? GameManager.Instance.PlayerInventory : null;
+            // 드래그 중 CurrentContainer가 Canvas 등으로 바뀔 수 있으므로,
+            // 토큰이 인벤토리에 속해 있었다면 인벤토리에서 직접 제거
+            bool wasInInventory = inventory != null && inventory.Items.Contains(token);
+            if (wasInInventory && token.CurrentContainer != inventory)
+            {
+                inventory.RemoveItem(token);
+            }
+            else
+            {
+                token.CurrentContainer?.RemoveItem(token);
+            }
+
             EventBus.Publish(new TokenConsumedEvent(token, equipment));
             Object.Destroy(token.gameObject);
             // Finish consumption before a lethal effect opens the reward UI.
