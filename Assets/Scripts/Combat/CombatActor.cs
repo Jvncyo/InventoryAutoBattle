@@ -2,9 +2,9 @@ using UnityEngine;
 
 public abstract class CombatActor : MonoBehaviour
 {
-    public float MaxHP { get; protected set; }
-    public float CurrentHP { get; protected set; }
-    public float Shield { get; protected set; }
+    public float MaxHP { get; internal set; }
+    public float CurrentHP { get; internal set; }
+    public float Shield { get; internal set; }
     public bool IsDead => CurrentHP <= 0f;
 
     public virtual void TakeDamage(float amount)
