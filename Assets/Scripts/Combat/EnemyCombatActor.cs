@@ -7,18 +7,21 @@ public class EnemyCombatActor : CombatActor
     protected float _attackMultiplier = 1f;
     protected float _currentCooldown;
     protected float _baseCooldown;
+    protected int _currentStageIndex = 1;
 
     public void Initialize(
         EnemyDataSO data,
+        int stageIndex,
         float hpMultiplier = 1f,
         float attackMultiplier = 1f,
         float speedMultiplier = 1f)
     {
         _data = data;
+        _currentStageIndex = stageIndex;
         _attackMultiplier = attackMultiplier;
 
-        // V5 스케일링 API 사용 (Legacy 필드 호환 보장)
-        var stats = data.GetLegacyStatsForStage(1);
+        // V5 스케일링 API 사용 (현재 스테이지 인덱스 사용)
+        var stats = data.GetLegacyStatsForStage(_currentStageIndex);
         float hp = stats.hp;
         float damage = stats.damage;
         float cooldown = stats.cooldown;
@@ -46,8 +49,8 @@ public class EnemyCombatActor : CombatActor
         _attackTimer -= delta;
         if (_attackTimer <= 0f)
         {
-            // V5 스케일링: AttackPower는 GetLegacyStatsForStage(1) 사용
-            var stats = _data.GetLegacyStatsForStage(1);
+            // V5 스케일링: 현재 스테이지 인덱스 사용
+            var stats = _data.GetLegacyStatsForStage(_currentStageIndex);
             float damage = stats.damage;
             float finalDamage = damage * _attackMultiplier;
 

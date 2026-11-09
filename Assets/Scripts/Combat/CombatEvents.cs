@@ -13,3 +13,15 @@ public class CombatActionEvent
         ActionType = actionType;
     }
 }
+
+public class EquipmentDamagedTriggerEvent
+{
+    public ItemInstance Equipment;
+    public float TriggerValue;
+
+    public EquipmentDamagedTriggerEvent(ItemInstance equipment, float triggerValue)
+    {
+        Equipment = equipment;
+        TriggerValue = triggerValue;
+    }
+}

@@ -271,9 +271,9 @@ public class PhaseCTests
         Assert.IsTrue(inv.PlaceItem(eq, 0, 0));
         // In Preparation, modal not shown, items interactable
 
-        // Test RewardEquipment -> modal active, CanInteract with placed items? Should be restricted by modal overlay
-        backingField.SetValue(fsm, RunStateMachine.RunState.RewardEquipment);
-        // Policy: during RewardEquipment, equipment draft modal is open, so placed items in inventory should NOT be interactable
+        // Test RewardPhase -> modal active, CanInteract with placed items? Should be restricted by modal overlay
+        backingField.SetValue(fsm, RunStateMachine.RunState.RewardPhase);
+        // Policy: during RewardPhase, unified reward modal is open, so placed items in inventory should NOT be interactable
         // This is enforced by UI layer, not FSM directly. FSM just tracks state.
 
         // Test GameOver -> no interactions
@@ -313,20 +313,26 @@ public class PhaseCTests
 
         var eGo = Track(new GameObject("EnemyActor"));
         var eActor = eGo.AddComponent<EnemyCombatActor>();
-        var fEnemyActor = typeof(CombatManager).GetField("enemyActor", BindingFlags.NonPublic | BindingFlags.Instance);
-        fEnemyActor.SetValue(cm, eActor);
+        // Use reflection to set the private _enemyActor field
+        var fEnemyActor = typeof(CombatManager).GetField("_enemyActor", BindingFlags.NonPublic | BindingFlags.Instance);
+        fEnemyActor?.SetValue(cm, eActor);
 
-        // Mock WaveManager (not in CombatManager, it's in RunStateMachine/FSM)
-        var wmGo = Track(new GameObject("WaveManager"));
-        var wm = wmGo.AddComponent<WaveManager>();
-        var waveDef = Track(ScriptableObject.CreateInstance<WaveDataSO>());
+        // Create enemyRoot for spawn target
+        var rootGO = Track(new GameObject("EnemyRoot"));
+        var fEnemyRoot = typeof(CombatManager).GetField("enemyRoot", BindingFlags.NonPublic | BindingFlags.Instance);
+        fEnemyRoot?.SetValue(cm, rootGO.transform);
+
+        // Mock StageProgressionManager (replaces WaveManager)
+        var spGo = Track(new GameObject("StageProgressionManager"));
+        var sp = spGo.AddComponent<StageProgressionManager>();
+        var stageData = Track(ScriptableObject.CreateInstance<StageDataSO>());
         var enemyData = Track(ScriptableObject.CreateInstance<EnemyDataSO>());
         enemyData.MaxHP = 100f;
         enemyData.AttackPower = 10f;
         enemyData.AttackInterval = 2f;
-        waveDef.Enemy = enemyData;
-        wm.GetType().GetField("waveDefinitions", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(wm, new List<WaveDataSO> { waveDef });
-        wm.StartRun();
+        stageData.GetType().GetField("enemyOverride", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(stageData, enemyData);
+        sp.GetType().GetField("stageDataList", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(sp, new List<StageDataSO> { stageData });
+        sp.StartRun();
 
         // StartCombat should fail without proper setup (missing enemy data from wave)
         LogAssert.Expect(LogType.Error, "Cannot start combat: combat references or enemy data are missing.");
@@ -336,12 +342,12 @@ public class PhaseCTests
         // Cleanup
         Object.DestroyImmediate(gmGo);
         Object.DestroyImmediate(cmGo);
-        Object.DestroyImmediate(wmGo);
+        Object.DestroyImmediate(spGo);
 
         // Verify singletons destroyed (Unity's == operator returns true for destroyed objects)
         Assert.IsFalse(GameManager.Instance);
         Assert.IsFalse(CombatManager.Instance);
-        Assert.IsFalse(WaveManager.Instance);
+        Assert.IsFalse(StageProgressionManager.Instance);
     }
 
     // ===== 8. Preserve existing scene singletons (tests run blank normally) =====

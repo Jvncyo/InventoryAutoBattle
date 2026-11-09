@@ -8,7 +8,7 @@ public static class InventoryInteractionPolicy
         if (state != null)
         {
             if (state.CurrentState == RunStateMachine.RunState.GameOver
-                || state.CurrentState == RunStateMachine.RunState.RewardEquipment) return false;
+                || state.CurrentState == RunStateMachine.RunState.RewardPhase) return false;
             combat |= state.CurrentState == RunStateMachine.RunState.Combat;
         }
         if (!combat) return true;

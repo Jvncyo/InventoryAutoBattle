@@ -90,12 +90,19 @@ public class SaveManager : MonoBehaviour
 
             if (data.DataVersion == 0)
             {
-                data.DataVersion = 2;
+                data.DataVersion = 3;
             }
-            else if (data.DataVersion > 2)
+            else if (data.DataVersion > 3)
             {
                 LastError = $"Unknown future data version {data.DataVersion}. Backup not downgraded.";
                 return SaveLoadStatus.Failed;
+            }
+
+            // v2 migration: CurrentWave -> CurrentStage
+            if (data.DataVersion == 2)
+            {
+                data.DataVersion = 3;
+                data.CurrentStage = data.CurrentWave > 0 ? data.CurrentWave : 1;
             }
 
             if (!Validate(data, width, height, out var error))
@@ -113,11 +120,11 @@ public class SaveManager : MonoBehaviour
         }
     }
 
-    public bool TrySave(int wave, PlayerCombatActor player, ItemContainer inventory)
+    public bool TrySave(int stage, PlayerCombatActor player, ItemContainer inventory)
     {
         LastError = null;
 
-        if (wave < 1 || player == null || inventory == null)
+        if (stage < 1 || player == null || inventory == null)
         {
             LastError = "Invalid save arguments.";
             return false;
@@ -131,11 +138,12 @@ public class SaveManager : MonoBehaviour
 
         var data = new RunSaveData
         {
-            DataVersion = 2,
-            CurrentWave = wave,
+            DataVersion = 3,
+            CurrentStage = stage,
+            CurrentWave = stage, // v2 backward compatibility
             PlayerHP = player.CurrentHP,
             PlayerMaxHP = player.MaxHP,
-            RunSeed = WaveManager.Instance != null ? WaveManager.Instance.CurrentWaveData?.Enemy?.Id : "",
+            RunSeed = StageProgressionManager.Instance != null ? System.Convert.ToString(StageProgressionManager.Instance.CurrentStage) : "",
             RunState = "Preparation",
             RunEnded = false
         };
@@ -150,6 +158,7 @@ public class SaveManager : MonoBehaviour
                 GridY = item.GridY,
                 BonusDamage = item.BonusDamage,
                 BonusShield = item.BonusShield,
+                BonusDamageReduction = item.BonusDamageReduction,
                 CooldownMultiplier = item.CooldownMultiplier
             });
         }
@@ -223,6 +232,7 @@ public class SaveManager : MonoBehaviour
             instance.Initialize(itemData);
             instance.BonusDamage = record.BonusDamage;
             instance.BonusShield = record.BonusShield;
+            instance.BonusDamageReduction = record.BonusDamageReduction;
             instance.CooldownMultiplier = Mathf.Max(0.2f, record.CooldownMultiplier);
             staged.Add(instance);
         }
@@ -288,7 +298,7 @@ public class SaveManager : MonoBehaviour
             if (data != null)
             {
                 data.RunEnded = true;
-                data.DataVersion = 2;
+                data.DataVersion = 3;
                 string updated = JsonUtility.ToJson(data, true);
                 File.WriteAllText(PrimaryPath, updated);
             }
@@ -376,9 +386,11 @@ public class SaveManager : MonoBehaviour
             return false;
         }
 
-        if (data.CurrentWave < 1)
+        // Support both v2 (CurrentWave) and v3 (CurrentStage)
+        int stage = data.CurrentStage > 0 ? data.CurrentStage : data.CurrentWave;
+        if (stage < 1)
         {
-            error = "Wave must be positive.";
+            error = "Stage must be positive.";
             return false;
         }
 
@@ -436,7 +448,7 @@ public class SaveManager : MonoBehaviour
                 return false;
             }
 
-            if (!float.IsFinite(record.BonusDamage) || !float.IsFinite(record.BonusShield) || !float.IsFinite(record.CooldownMultiplier))
+            if (!float.IsFinite(record.BonusDamage) || !float.IsFinite(record.BonusShield) || !float.IsFinite(record.BonusDamageReduction) || !float.IsFinite(record.CooldownMultiplier))
             {
                 error = $"Non-finite modifier for {record.ItemDataId}";
                 return false;

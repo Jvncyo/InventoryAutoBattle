@@ -83,8 +83,8 @@ public static class CombatEntityFactory
             }
         }
 
-        // EnemyCombatActor.Initialize 호출
-        actor.Initialize(enemyData, hpMultiplier, attackMultiplier, speedMultiplier);
+        // EnemyCombatActor.Initialize 호출 (stageNumber 전달)
+        actor.Initialize(enemyData, stageNumber, hpMultiplier, attackMultiplier, speedMultiplier);
 
         // Initialize는 이미 CalculateStatsForStage를 다시 호출하므로,
         // 여기서는 이미 계산된 스탯을 직접 적용 (Initialize 후 덮어쓰기)

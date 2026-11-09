@@ -65,7 +65,8 @@ public class UniversalDragDropHandler : MonoBehaviour
 
     private void ExecuteTokenConsumption(ItemInstance token, ItemInstance equipment)
     {
-        if (!TokenUseService.TryUse(token, equipment)) CancelDrag(token);
+        // Enhancement tokens no longer exist in inventory. Equipment-drag path disabled.
+        CancelDrag(token);
     }
 
     public void CancelDrag(ItemInstance item)

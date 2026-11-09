@@ -13,6 +13,7 @@ public class ItemInstance : MonoBehaviour
     // Runtime Buff Modifiers (Target of Token Effects)
     public float BonusDamage { get; set; }
     public float BonusShield { get; set; }
+    public float BonusDamageReduction { get; set; }
     public float CooldownMultiplier { get; set; } = 1.0f;
     public float CooldownTimer { get; set; }
 

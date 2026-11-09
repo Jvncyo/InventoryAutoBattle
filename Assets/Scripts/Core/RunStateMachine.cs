@@ -4,18 +4,21 @@ using UnityEngine.SceneManagement;
 
 public class RunStateMachine : MonoBehaviour
 {
-    public enum RunState { Preparation, Combat, RewardEquipment, RewardToken, GameOver }
+    public enum RunState { Preparation, Combat, RewardPhase, RewardToken, GameOver }
     public static RunStateMachine Instance { get; private set; }
     public RunState CurrentState { get; private set; }
     public string StatusMessage { get; private set; }
 
+    [Header("Core References")]
     [SerializeField] private CombatManager combatManager;
     [SerializeField] private RewardManager rewardManager;
-    [SerializeField] private EquipmentDraftUI equipmentDraftUI;
+    [SerializeField] private UnifiedRewardUI unifiedRewardUI;
+    [SerializeField] private UnifiedRewardService unifiedRewardService;
     [SerializeField] private ItemContainer playerInventory;
-    [SerializeField] private WaveManager waveManager;
+    [SerializeField] private StageProgressionManager stageProgressionManager;
     [SerializeField] private List<ItemDataSO> startingItems = new();
     [SerializeField] private GameObject tokenProceedButton;
+
     private bool _initialized;
     private bool _completingReward;
     private SaveManager _save;
@@ -25,6 +28,8 @@ public class RunStateMachine : MonoBehaviour
     public bool PersistenceBlocked => RecoveryRequired || _restoring;
     public bool SaveFailed { get; private set; }
     public string SaveStatus { get; private set; } = "";
+
+    private List<UnifiedRewardOption> _currentRewardOptions;
 
     private void Awake()
     {
@@ -39,13 +44,11 @@ public class RunStateMachine : MonoBehaviour
         EventBus.Subscribe<RewardPhaseFinishedEvent>(OnRewardPhaseFinished);
         EventBus.Subscribe<ItemPlacedEvent>(OnInventoryPlaced);
         EventBus.Subscribe<ItemRemovedEvent>(OnInventoryRemoved);
-        // On scene reload, Start may not be called immediately; ensure recovery runs once.
         if (!_initialized) RetryLoad();
     }
 
     private void Start()
     {
-        // Already called in OnEnable for scene reload resilience
         ResolveReferences();
     }
 
@@ -54,8 +57,10 @@ public class RunStateMachine : MonoBehaviour
         if (_save == null) _save = GetComponent<SaveManager>();
         if (playerInventory == null && GameManager.Instance != null)
             playerInventory = GameManager.Instance.PlayerInventory;
-        if (waveManager == null) waveManager = WaveManager.Instance;
+        if (stageProgressionManager == null) stageProgressionManager = StageProgressionManager.Instance;
         if (combatManager == null) combatManager = CombatManager.Instance;
+        if (unifiedRewardService == null) unifiedRewardService = FindObjectOfType<UnifiedRewardService>();
+        if (unifiedRewardUI == null) unifiedRewardUI = FindObjectOfType<UnifiedRewardUI>();
     }
 
     public void RetryLoad()
@@ -66,7 +71,7 @@ public class RunStateMachine : MonoBehaviour
         RecoveryRequired = false;
         try
         {
-            if (_save == null || playerInventory == null || waveManager == null || combatManager?.PlayerActor == null)
+            if (_save == null || playerInventory == null || stageProgressionManager == null || combatManager?.PlayerActor == null)
             { FailRecovery("Missing save/run references."); return; }
             var result = _save.TryLoad(out var data, playerInventory.Width, playerInventory.Height);
             if (result == SaveLoadStatus.Failed) { FailRecovery(_save.LastError); return; }
@@ -78,14 +83,18 @@ public class RunStateMachine : MonoBehaviour
             }
             if (result == SaveLoadStatus.Success)
             {
-                if (!waveManager.RestoreWave(data.CurrentWave) || !_save.TryRestore(data, playerInventory))
-                { FailRecovery(string.IsNullOrEmpty(_save.LastError) ? "Invalid wave configuration." : _save.LastError); return; }
+                int stageToRestore = data.CurrentStage > 0 ? data.CurrentStage : data.CurrentWave;
+                stageProgressionManager.RestoreStage(stageToRestore);
+                if (!_save.TryRestore(data, playerInventory))
+                { FailRecovery(string.IsNullOrEmpty(_save.LastError) ? "Invalid stage configuration." : _save.LastError); return; }
                 combatManager.PlayerActor.Initialize(data.PlayerMaxHP, data.PlayerMaxHP);
             }
             else
             {
-                waveManager.StartRun();
-                if (!waveManager.IsRunActive) { FailRecovery("Invalid wave configuration."); return; }
+                stageProgressionManager.CurrentStage = 1;
+                stageProgressionManager.RestoreStage(1);
+                if (stageProgressionManager.GetCurrentStageData() == null) { FailRecovery("Invalid stage configuration."); return; }
+                stageProgressionManager.StartRun();
                 InitializeStartingInventory();
             }
             ChangeState(RunState.Preparation);
@@ -118,7 +127,7 @@ public class RunStateMachine : MonoBehaviour
     {
         if (PersistenceBlocked || CurrentState != RunState.Preparation) return false;
         _savePending = false;
-        SaveFailed = _save == null || !_save.TrySave(waveManager.CurrentWave, combatManager.PlayerActor, playerInventory);
+        SaveFailed = _save == null || !_save.TrySave(stageProgressionManager.CurrentStage, combatManager.PlayerActor, playerInventory);
         SaveStatus = SaveFailed ? "Save failed: " + (_save != null ? _save.LastError : "SaveManager missing.") : "";
         StatusMessage = SaveStatus;
         return !SaveFailed;
@@ -166,16 +175,16 @@ public class RunStateMachine : MonoBehaviour
         if (!ended.IsVictory)
         {
             _save?.EndRun();
-            waveManager?.EndRun();
+            stageProgressionManager?.EndRun();
             ChangeState(RunState.GameOver);
             return;
         }
-        ChangeState(RunState.RewardEquipment);
+        ChangeState(RunState.RewardPhase);
     }
 
     private void OnRewardPhaseFinished(RewardPhaseFinishedEvent _)
     {
-        if (CurrentState == RunState.RewardEquipment) ChangeState(RunState.RewardToken);
+        if (CurrentState == RunState.RewardPhase) ChangeState(RunState.RewardToken);
     }
 
     public void ChangeState(RunState next)
@@ -183,16 +192,16 @@ public class RunStateMachine : MonoBehaviour
         if (_initialized && CurrentState == next) return;
         if (next == RunState.Combat)
         {
-            if (CurrentState != RunState.Preparation || combatManager == null || waveManager == null
-                || !waveManager.IsRunActive || waveManager.GetCurrentEnemyData() == null
-                || combatManager.PlayerActor == null || combatManager.EnemyActor == null)
+            if (CurrentState != RunState.Preparation || combatManager == null || stageProgressionManager == null
+                || !stageProgressionManager.IsRunActive() || stageProgressionManager.GetCurrentStageEnemy() == null
+                || combatManager.PlayerActor == null)
             {
-                StatusMessage = "Cannot start combat: check wave and actor references.";
+                StatusMessage = "Cannot start combat: check stage and actor references.";
                 return;
             }
         }
         foreach (var view in FindObjectsByType<ItemView>(FindObjectsSortMode.None)) view.CancelActiveDrag();
-        if (CurrentState == RunState.RewardEquipment) equipmentDraftUI?.Close();
+        if (CurrentState == RunState.RewardPhase) unifiedRewardUI?.Close();
         if (next != RunState.Combat) combatManager?.StopCombat();
         var prev = CurrentState;
         CurrentState = next;
@@ -206,16 +215,15 @@ public class RunStateMachine : MonoBehaviour
             case RunState.Preparation:
                 rewardManager?.ClearTokenTray();
                 combatManager?.PlayerActor?.ResetForNewWave();
-                
-                // 사망한 액터의 애니메이션 상태 리셋 (Die → Idle)
+
                 if (combatManager?.PlayerActor?.IsDead == true)
                     combatManager.PlayerActor.ResetCombatVisuals();
                 if (combatManager?.EnemyActor?.IsDead == true)
                     combatManager.EnemyActor.ResetCombatVisuals();
-                
+
                 if (prev == RunState.RewardToken)
                 {
-                    if (_save != null && !_save.TrySave(waveManager.CurrentWave, combatManager.PlayerActor, playerInventory))
+                    if (_save != null && !_save.TrySave(stageProgressionManager.CurrentStage, combatManager.PlayerActor, playerInventory))
                         SaveFailed = true;
                     else { SaveFailed = false; _savePending = false; }
                 }
@@ -227,30 +235,124 @@ public class RunStateMachine : MonoBehaviour
             case RunState.Combat:
                 if (_save != null && !PersistenceBlocked)
                 {
-                    if (!_save.TrySave(waveManager.CurrentWave, combatManager.PlayerActor, playerInventory))
+                    if (!_save.TrySave(stageProgressionManager.CurrentStage, combatManager.PlayerActor, playerInventory))
                         SaveFailed = true;
                     else { SaveFailed = false; _savePending = false; }
                 }
-                combatManager.StartCombat(waveManager.GetCurrentEnemyData());
+                combatManager.StartCombat(stageProgressionManager.GetCurrentStageEnemy());
                 break;
-            case RunState.RewardEquipment:
+            case RunState.RewardPhase:
                 if (prev == RunState.Combat && _save != null && !PersistenceBlocked)
                 {
-                    if (!_save.TrySave(waveManager.CurrentWave, combatManager.PlayerActor, playerInventory))
+                    if (!_save.TrySave(stageProgressionManager.CurrentStage, combatManager.PlayerActor, playerInventory))
                         SaveFailed = true;
                     else SaveFailed = false;
                 }
-                if (rewardManager != null) rewardManager.TriggerRewardPhase(waveManager?.GetEnhancementTokenPool());
-                else ChangeState(RunState.RewardToken);
+                GenerateAndShowUnifiedReward();
                 break;
             case RunState.RewardToken:
-                rewardManager?.GenerateTokenRewardTray(waveManager?.GetCombatTokenPool());
+                rewardManager?.GenerateTokenRewardTray(stageProgressionManager.GetCombatTokenPool());
                 break;
             case RunState.GameOver:
                 rewardManager?.ClearTokenTray();
-                equipmentDraftUI?.Close();
+                unifiedRewardUI?.Close();
                 break;
         }
+    }
+
+    private void GenerateAndShowUnifiedReward()
+    {
+        if (unifiedRewardService == null || unifiedRewardUI == null || playerInventory == null || stageProgressionManager == null)
+        {
+            Debug.LogWarning("Unified reward references missing; skipping to token reward.");
+            ChangeState(RunState.RewardToken);
+            return;
+        }
+
+        var stageData = stageProgressionManager.GetCurrentStageData();
+        var equipPool = stageData?.equipmentDropPool ?? new List<ItemDataSO>();
+
+        _currentRewardOptions = unifiedRewardService.GenerateOptions(playerInventory, equipPool, 3);
+
+        if (_currentRewardOptions == null || _currentRewardOptions.Count == 0)
+        {
+            // 옵션이 없으면(장비도 없고 강화할 것도 없음) 바로 토큰 단계로
+            ChangeState(RunState.RewardToken);
+            return;
+        }
+
+        unifiedRewardUI.ShowDraft(_currentRewardOptions,
+            OnUnifiedRewardSelected,
+            OnUnifiedRewardSkip);
+    }
+
+    private void OnUnifiedRewardSelected(int index)
+    {
+        if (_currentRewardOptions == null || index < 0 || index >= _currentRewardOptions.Count)
+        {
+            Debug.LogWarning("Invalid reward option index.");
+            return;
+        }
+
+        var option = _currentRewardOptions[index];
+        bool success = false;
+
+        if (option.Type == RewardOptionType.Equipment)
+        {
+            success = PlaceEquipmentInInventory(option.EquipmentData);
+        }
+        else // Enhancement
+        {
+            success = option.Apply(); // StatBuffEffectSO.ApplyToEquipment 호출
+            if (success)
+            {
+                // 강화 적용 시 아이템 뷰 갱신
+                foreach (var view in FindObjectsByType<ItemContainerView>(FindObjectsSortMode.None)) view.RefreshViews();
+            }
+        }
+
+        if (success)
+        {
+            // 즉시 저장
+            if (_save != null && !_save.TrySave(stageProgressionManager.CurrentStage, combatManager.PlayerActor, playerInventory))
+                SaveFailed = true;
+            else SaveFailed = false;
+
+            _currentRewardOptions = null;
+            EventBus.Publish(new RewardPhaseFinishedEvent());
+        }
+        else
+        {
+            unifiedRewardUI?.ShowMessage("적용 실패. 다른 옵션을 선택하거나 스킵하세요.");
+        }
+    }
+
+    private bool PlaceEquipmentInInventory(ItemDataSO equipmentData)
+    {
+        if (playerInventory == null || equipmentData == null || equipmentData.ItemType != ItemType.Equipment)
+            return false;
+
+        for (int y = 0; y < playerInventory.Height; y++)
+        {
+            for (int x = 0; x < playerInventory.Width; x++)
+            {
+                if (!playerInventory.CanPlace(equipmentData, x, y)) continue;
+
+                GameObject go = new GameObject($"Equipment_{equipmentData.Id}");
+                ItemInstance instance = go.AddComponent<ItemInstance>();
+                instance.Initialize(equipmentData);
+
+                if (playerInventory.PlaceItem(instance, x, y)) return true;
+                Destroy(go);
+            }
+        }
+        return false;
+    }
+
+    private void OnUnifiedRewardSkip()
+    {
+        _currentRewardOptions = null;
+        EventBus.Publish(new RewardPhaseFinishedEvent());
     }
 
     public void OnStartCombatButtonClicked()
@@ -265,10 +367,10 @@ public class RunStateMachine : MonoBehaviour
         try
         {
             rewardManager?.FinalizeRewardPhase();
-            if (waveManager != null && waveManager.IsRunActive)
+            if (stageProgressionManager != null)
             {
-                waveManager.NextWave();
-                ChangeState(waveManager.IsRunActive ? RunState.Preparation : RunState.GameOver);
+                stageProgressionManager.AdvanceStage();
+                ChangeState(stageProgressionManager.IsRunActive() ? RunState.Preparation : RunState.GameOver);
             }
             else ChangeState(RunState.GameOver);
         }

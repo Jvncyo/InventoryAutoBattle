@@ -13,7 +13,7 @@ public class CombatTokenDropTarget : MonoBehaviour
     public void Preview(ItemInstance token, bool hovered)
     {
         if (highlight == null) return;
-        bool valid = token != null && TokenUseService.Check(token, null, actor, out _);
+        bool valid = token != null && TokenUseService.Check(token, actor, out _);
         highlight.color = token == null ? _normal : valid
             ? (hovered ? Color.green : new Color(0.4f, 0.7f, 0.4f))
             : (hovered ? new Color(0.8f, 0.3f, 0.3f) : _normal);

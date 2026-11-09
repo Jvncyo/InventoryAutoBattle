@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -16,7 +18,8 @@ public class ItemView : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     private CanvasGroup _canvasGroup;
     private Transform _originalParent;
     private Vector2 _pointerOffset;
-    private readonly System.Collections.Generic.Dictionary<Image, Color> _previewColors = new();
+    private readonly Dictionary<Image, Color> _previewColors = new();
+    private ItemDiscardTarget _discardTarget;
 
     private void ClearEquipmentPreview()
     {
@@ -59,6 +62,9 @@ public class ItemView : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         else _pointerOffset = Vector2.zero;
         IsDragging = true;
         _canvasGroup.blocksRaycasts = false;
+
+        // 삭제존 캐시
+        _discardTarget = FindFirstObjectByType<ItemDiscardTarget>();
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -66,7 +72,7 @@ public class ItemView : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         if (!IsDragging) return;
         TokenUseService.ClearMessage();
         ClearEquipmentPreview();
-        
+
         // 다중 셀 아이템 하이라이트 로직
         var containerViews = FindObjectsByType<ItemContainerView>(FindObjectsSortMode.None);
         foreach (var view in containerViews)
@@ -77,6 +83,14 @@ public class ItemView : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
                 slot.SetHighlight(true);
         }
 
+        // 삭제존 하이라이트
+        if (_discardTarget != null)
+        {
+            bool hovered = _discardTarget.Contains(eventData.position, ContainerView.EventCamera);
+            _discardTarget.Preview(ItemInstance, hovered);
+        }
+
+        // 토큰 장비 프리뷰
         if (ItemInstance.Data.ItemType == ItemType.Token)
             foreach (var candidate in FindObjectsByType<ItemView>(FindObjectsSortMode.None))
             {
@@ -84,16 +98,16 @@ public class ItemView : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
                 var image = candidate.GetComponent<Image>();
                 if (image == null) continue;
                 _previewColors[image] = image.color;
-                image.color = TokenUseService.Check(ItemInstance, candidate.ItemInstance, null, out _)
+                image.color = TokenUseService.Check(ItemInstance, null, out _)
                     ? new Color(0.25f, 0.65f, 0.35f) : new Color(0.55f, 0.25f, 0.25f);
             }
         foreach (var target in FindObjectsByType<CombatTokenDropTarget>(FindObjectsSortMode.None))
         {
             bool hovered = target.Contains(eventData.position, ContainerView.EventCamera);
             target.Preview(ItemInstance, hovered);
-            if (hovered) TokenUseService.Preview(ItemInstance, null, target.Actor);
+            if (hovered) TokenUseService.Preview(ItemInstance, target.Actor);
         }
-        
+
         Camera camera = _canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : _canvas.worldCamera;
         if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
             _canvas.transform as RectTransform, eventData.position, camera, out var local))
@@ -103,7 +117,7 @@ public class ItemView : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     public void OnEndDrag(PointerEventData eventData)
     {
         if (!IsDragging) return;
-        
+
         // 모든 하이라이트 리셋
         foreach (var view in FindObjectsByType<ItemContainerView>(FindObjectsSortMode.None))
             view.ResetAllHighlights();
@@ -117,7 +131,7 @@ public class ItemView : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
             {
                 if (target.Contains(eventData.position, ContainerView.EventCamera))
                 {
-                    if (TokenUseService.TryUse(ItemInstance, null, target.Actor))
+                    if (TokenUseService.TryUse(ItemInstance, target.Actor))
                     {
                         return; // 성공 시 종료 (토큰 소모됨)
                     }
@@ -126,7 +140,17 @@ public class ItemView : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
             }
         }
 
-        // 2. 기존 그리드 기반 드롭 처리 (장비 강화, 이동 등)
+        // 2. ItemDiscardTarget - 삭제존 체크
+        if (_discardTarget != null && _discardTarget.Contains(eventData.position, ContainerView.EventCamera))
+        {
+            if (ItemDiscardService.TryDiscard(ItemInstance))
+            {
+                return; // 삭제 성공 시 종료
+            }
+            // 삭제 실패 시 아래 로직으로 fallback
+        }
+
+        // 3. 기존 그리드 기반 드롭 처리 (장비 강화, 이동 등)
         var handler = UniversalDragDropHandler.Instance;
         if (handler == null)
         {
@@ -148,6 +172,7 @@ public class ItemView : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     {
         IsDragging = false;
         ClearEquipmentPreview();
+        if (_discardTarget != null) _discardTarget.Preview(null, false);
         foreach (var target in FindObjectsByType<CombatTokenDropTarget>(FindObjectsSortMode.None)) target.Preview(null, false);
         if (_canvasGroup != null) _canvasGroup.blocksRaycasts = true;
         if (_originalParent != null) transform.SetParent(_originalParent, true);

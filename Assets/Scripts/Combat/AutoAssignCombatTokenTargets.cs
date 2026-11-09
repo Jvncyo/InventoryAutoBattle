@@ -26,7 +26,7 @@ public class AutoAssignCombatTokenTargets : MonoBehaviour
             var target = playerHpBar.GetComponent<CombatTokenDropTarget>();
             if (target != null && target.Actor == null)
             {
-                var playerActor = FindObjectOfType<PlayerCombatActor>();
+                var playerActor = FindAnyObjectByType<PlayerCombatActor>();
                 if (playerActor != null)
                 {
                     target.GetType().GetField("actor", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.SetValue(target, playerActor);
@@ -40,13 +40,30 @@ public class AutoAssignCombatTokenTargets : MonoBehaviour
         if (enemyHpBar != null)
         {
             var target = enemyHpBar.GetComponent<CombatTokenDropTarget>();
-            if (target != null && target.Actor == null)
+            if (target != null)
             {
-                var enemyActor = FindObjectOfType<EnemyCombatActor>();
+                EnemyCombatActor enemyActor = null;
+
+                // 1순위: 전투 중이면 CombatManager의 현재 적 사용
+                var combatManager = CombatManager.Instance;
+                if (combatManager != null && combatManager.InCombat && combatManager.EnemyActor != null)
+                {
+                    enemyActor = combatManager.EnemyActor;
+                }
+                // 2순위: 전투 중이 아니면 FindAnyObjectByType으로 검색 (씬에 있는 적)
+                else
+                {
+                    enemyActor = FindAnyObjectByType<EnemyCombatActor>();
+                }
+
                 if (enemyActor != null)
                 {
                     target.GetType().GetField("actor", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.SetValue(target, enemyActor);
-                    Debug.Log($"[AutoAssignCombatTokenTargets] EnemyHpBar Actor assigned: {enemyActor.name}");
+                    Debug.Log($"[AutoAssignCombatTokenTargets] EnemyHpBar Actor assigned: {enemyActor.name} (InCombat: {combatManager?.InCombat})");
+                }
+                else
+                {
+                    Debug.LogWarning("[AutoAssignCombatTokenTargets] EnemyCombatActor not found for EnemyHpBar");
                 }
             }
         }

@@ -9,51 +9,87 @@ public class CombatManager : MonoBehaviour
 
     [SerializeField] private ItemContainer playerInventory;
     [SerializeField] private PlayerCombatActor playerActor;
-    [SerializeField] private EnemyCombatActor enemyActor;
+    [SerializeField] private Transform enemyRoot;
 
+    private EnemyCombatActor _enemyActor;
+    private StageProgressionManager _stageManager;
     private bool _inCombat;
+    private List<ItemInstance> _currentEquipments;
 
     public bool InCombat => _inCombat;
     public PlayerCombatActor PlayerActor => playerActor;
-    public EnemyCombatActor EnemyActor => enemyActor;
-
-    public void StopCombat()
-    {
-        _inCombat = false;
-        StopAllCoroutines();
-    }
+    public EnemyCombatActor EnemyActor => _enemyActor;
 
     private void Awake()
     {
         Instance = this;
+        _stageManager = StageProgressionManager.Instance;
+        
+        // OnDamaged 트리거 구독
+        EventBus.Subscribe<EquipmentDamagedTriggerEvent>(OnEquipmentDamagedTrigger);
+    }
+
+    private void OnDestroy()
+    {
+        EventBus.Unsubscribe<EquipmentDamagedTriggerEvent>(OnEquipmentDamagedTrigger);
     }
 
     public void StartCombat(EnemyDataSO enemyData)
     {
         if (_inCombat || enemyData == null || playerInventory == null ||
-            playerActor == null || enemyActor == null)
+            playerActor == null || enemyRoot == null)
         {
             Debug.LogError("Cannot start combat: combat references or enemy data are missing.");
             return;
         }
 
         _inCombat = true;
-        var waves = WaveManager.Instance;
-        enemyActor.Initialize(
-            enemyData,
-            waves != null ? waves.CurrentEnemyHPMultiplier : 1f,
-            waves != null ? waves.CurrentEnemyAttackMultiplier : 1f,
-            waves != null ? waves.CurrentEnemySpeedMultiplier : 1f);
 
-        var equipments = playerInventory.Items
+        // 적 스폰 (CombatEntityFactory 사용)
+        var stageManager = StageProgressionManager.Instance;
+        int currentStage = stageManager != null ? stageManager.CurrentStage : 1;
+        
+        _enemyActor = CombatEntityFactory.SpawnEnemy(
+            enemyData,
+            currentStage,
+            enemyRoot,
+            hpMultiplier: 1f,
+            attackMultiplier: 1f,
+            speedMultiplier: 1f);
+
+        if (_enemyActor == null)
+        {
+            Debug.LogError("[CombatManager] Failed to spawn enemy actor!");
+            StopCombat();
+            return;
+        }
+
+        // 적 스폰 완료 후 토큰 타겟 재할당 (EnemyHpBar용)
+        var autoAssign = FindAnyObjectByType<AutoAssignCombatTokenTargets>();
+        autoAssign?.AssignTargets();
+
+        _currentEquipments = playerInventory.Items
             .Where(i => i.Data.ItemType == ItemType.Equipment)
             .ToList();
 
-        foreach (var eq in equipments)
+        foreach (var eq in _currentEquipments)
             eq.ResetCombatState();
 
-        StartCoroutine(CombatTickRoutine(equipments));
+        StartCoroutine(CombatTickRoutine(_currentEquipments));
         EventBus.Publish(new CombatStartedEvent());
+    }
+
+    private void OnEquipmentDamagedTrigger(EquipmentDamagedTriggerEvent evt)
+    {
+        if (!_inCombat || _currentEquipments == null) return;
+        if (evt.Equipment == null) return;
+        
+        // 쿨다운이 끝난 장비만 트리거 발동
+        if (evt.Equipment.CooldownTimer <= 0f)
+        {
+            ExecuteEquipmentTrigger(evt.Equipment);
+            evt.Equipment.CooldownTimer = evt.Equipment.Data.BaseCooldown * evt.Equipment.CooldownMultiplier;
+        }
     }
 
     private IEnumerator CombatTickRoutine(List<ItemInstance> equipments)
@@ -69,6 +105,9 @@ public class CombatManager : MonoBehaviour
             // 1. Process Equipment Cooldowns
             foreach (var eq in equipments)
             {
+                // Skip destroyed or null equipment
+                if (eq == null || eq.Equals(null) || !eq || eq.gameObject == null) continue;
+                
                 eq.CooldownTimer -= tickInterval;
                 if (eq.CooldownTimer <= 0f)
                 {
@@ -79,41 +118,62 @@ public class CombatManager : MonoBehaviour
             }
 
             // 2. Process Enemy Attack Tick
-            enemyActor.Tick(tickInterval, playerActor);
+            if (_enemyActor != null)
+                _enemyActor.Tick(tickInterval, playerActor);
 
             ResolveOutcome();
         }
     }
 
+    public void StopCombat()
+    {
+        _inCombat = false;
+        StopAllCoroutines();
+        
+        // 스폰된 적 오브젝트 정리
+        if (_enemyActor != null)
+        {
+            Destroy(_enemyActor.gameObject);
+            _enemyActor = null;
+        }
+    }
+
     public bool ResolveOutcome()
     {
-        if (!_inCombat || playerActor == null || enemyActor == null) return false;
-        if (!playerActor.IsDead && !enemyActor.IsDead) return false;
+        if (!_inCombat || playerActor == null || _enemyActor == null) return false;
+        if (!playerActor.IsDead && !_enemyActor.IsDead) return false;
+
+        // Cache references before publishing events (handlers may null out _enemyActor)
+        var enemyActor = _enemyActor;
+        var isPlayerDead = playerActor.IsDead;
+        var isEnemyDead = enemyActor.IsDead;
+
         _inCombat = false;
-        EventBus.Publish(new CombatEndedEvent(!playerActor.IsDead));
-        
-        // 사망 애니메이션 트리거
-        if (playerActor.IsDead)
+        EventBus.Publish(new CombatEndedEvent(!isPlayerDead));
+
+        // 사망 애니메이션 트리거 - 캐시된 참조 사용
+        if (isPlayerDead && playerActor.gameObject != null)
             EventBus.Publish(new CombatActionEvent(playerActor.gameObject, CombatActionType.Die));
-        if (enemyActor.IsDead)
+        if (isEnemyDead && enemyActor != null && enemyActor.gameObject != null)
             EventBus.Publish(new CombatActionEvent(enemyActor.gameObject, CombatActionType.Die));
-        
+
         return true;
     }
 
     private void ExecuteEquipmentTrigger(ItemInstance eq)
     {
         float totalDamage = eq.Data.BaseDamage + eq.BonusDamage;
-        if (totalDamage > 0f) enemyActor.TakeDamage(totalDamage);
+        if (totalDamage > 0f && _enemyActor != null) _enemyActor.TakeDamage(totalDamage);
 
         float totalShield = eq.Data.BaseShield + eq.BonusShield;
-        if (totalShield > 0f) playerActor.AddShield(totalShield);
+        if (totalShield > 0f) playerActor?.AddShield(totalShield);
 
-        if (eq.Data.BaseHeal > 0f) playerActor.Heal(eq.Data.BaseHeal);
+        if (eq.Data.BaseHeal > 0f) playerActor?.Heal(eq.Data.BaseHeal);
 
         EventBus.Publish(new EquipmentTriggeredEvent(eq));
         
-        // 장비 공격 애니메이션 트리거
-        EventBus.Publish(new CombatActionEvent(playerActor.gameObject, CombatActionType.Attack));
+        // 장비 공격 애니메이션 트리거 - playerActor와 gameObject 모두 체크
+        if (playerActor != null && playerActor.gameObject != null && playerActor.gameObject.activeInHierarchy)
+            EventBus.Publish(new CombatActionEvent(playerActor.gameObject, CombatActionType.Attack));
     }
 }

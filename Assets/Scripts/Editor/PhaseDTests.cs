@@ -42,13 +42,18 @@ public class PhaseDTests
         var enemyData = Track(ScriptableObject.CreateInstance<EnemyDataSO>());
         enemyData.MaxHP = 100f;
         enemyData.AttackInterval = 2f;
-        _enemy.Initialize(enemyData);
+        _enemy.Initialize(enemyData, 1, 1f, 1f, 1f); // stageIndex=1, default multipliers
 
         _combat = Component<CombatManager>("PhaseD_CombatManager");
         var serialized = new SerializedObject(_combat);
         serialized.FindProperty("playerActor").objectReferenceValue = _player;
-        serialized.FindProperty("enemyActor").objectReferenceValue = _enemy;
+        // Set enemyRoot transform (new field in refactored CombatManager)
+        var enemyRootGO = Track(new GameObject("EnemyRoot"));
+        serialized.FindProperty("enemyRoot").objectReferenceValue = enemyRootGO.transform;
         serialized.ApplyModifiedPropertiesWithoutUndo();
+        // Set the private _enemyActor field so CombatTokenEffectSO.CanApply works
+        var fEnemyActor = typeof(CombatManager).GetField("_enemyActor", BindingFlags.NonPublic | BindingFlags.Instance);
+        fEnemyActor?.SetValue(_combat, _enemy);
         var inCombatField = typeof(CombatManager).GetField("_inCombat",
             BindingFlags.NonPublic | BindingFlags.Instance);
         Assert.IsNotNull(inCombatField);

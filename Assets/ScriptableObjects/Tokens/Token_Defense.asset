@@ -25,6 +25,6 @@ MonoBehaviour:
   BaseHeal: 0
   Triggers: []
   AcceptableTokens: 
-  TokenCategory: 0
+  TokenCategory: 1
   TokenType: 2
-  TokenEffect: {fileID: 11400000, guid: 2c5fc7cf22e922741b2dc27a2a8ded81, type: 2}
+  TokenEffect: {fileID: 11400000, guid: 5d89e4c8f5b7a6c4b8a9e2d1c3f4e5a6, type: 2}

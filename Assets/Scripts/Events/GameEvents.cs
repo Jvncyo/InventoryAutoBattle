@@ -10,3 +10,4 @@ public readonly struct ItemPlacedEvent { public readonly ItemInstance Item; publ
 public readonly struct ItemRemovedEvent { public readonly ItemInstance Item; public readonly ItemContainer Container; public ItemRemovedEvent(ItemInstance item, ItemContainer container) { Item = item; Container = container; } }
 public readonly struct ItemPlacementResetEvent { public readonly ItemInstance Item; public ItemPlacementResetEvent(ItemInstance i) => Item = i; }
 public readonly struct EnemyAttackedEvent { public readonly float Damage; public EnemyAttackedEvent(float d) => Damage = d; }
+public readonly struct ItemDiscardedEvent { public readonly ItemInstance Item; public readonly ItemContainer Container; public ItemDiscardedEvent(ItemInstance item, ItemContainer container) { Item = item; Container = container; } }

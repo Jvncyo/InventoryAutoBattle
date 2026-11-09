@@ -280,7 +280,8 @@ public class PhaseETests
         Assert.IsTrue(_saveManager.TrySave(1, _player, _inventory));
 
         var json = File.ReadAllText(_tempPath);
-        File.WriteAllText(_tempPath, ReplaceJson(json, "\"CurrentWave\"\\s*:\\s*1", "\"CurrentWave\": 0"));
+        File.WriteAllText(_tempPath, ReplaceJson(json, "\"CurrentStage\"\\s*:\\s*1", "\"CurrentStage\": 0"));
+        File.WriteAllText(_tempPath, ReplaceJson(File.ReadAllText(_tempPath), "\"CurrentWave\"\\s*:\\s*\\d+", "\"CurrentWave\": 0"));
 
         var result = _saveManager.TryLoad(out var data, 6, 6);
         Assert.AreEqual(SaveLoadStatus.Failed, result);
@@ -376,7 +377,7 @@ public class PhaseETests
         Assert.IsTrue(_saveManager.TrySave(1, _player, _inventory));
 
         var json = File.ReadAllText(_tempPath);
-        File.WriteAllText(_tempPath, ReplaceJson(json, "\"DataVersion\"\\s*:\\s*2", "\"DataVersion\": 99"));
+        File.WriteAllText(_tempPath, ReplaceJson(json, "\"DataVersion\"\\s*:\\s*3", "\"DataVersion\": 99"));
 
         var result = _saveManager.TryLoad(out var data, 6, 6);
         Assert.AreEqual(SaveLoadStatus.Failed, result);

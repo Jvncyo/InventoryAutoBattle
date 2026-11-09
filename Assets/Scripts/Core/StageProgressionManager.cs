@@ -13,15 +13,30 @@ public class StageProgressionManager : MonoBehaviour
     [Tooltip("인스펙터에서 스테이지 순서대로 StageDataSO를 드래그하여 배치하세요.")]
     public List<StageDataSO> stageDataList = new();
 
-    public int CurrentStage { get; private set; } = 1;
+    public int CurrentStage { get; internal set; } = 1;
+    [SerializeField] private bool _isRunActive = false;
 
     private void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+        // Ensure run is active on fresh scene load (non-persistent across domain reloads in Play mode)
+        if (!_isRunActive && stageDataList != null && stageDataList.Count > 0)
+            StartRun();
     }
 
     public bool IsBossStage() => (CurrentStage % 10 == 0);
+    public bool IsRunActive() => _isRunActive;
+
+    public void StartRun()
+    {
+        _isRunActive = true;
+    }
+
+    public void EndRun()
+    {
+        _isRunActive = false;
+    }
 
     public StageDataSO GetCurrentStageData()
     {
@@ -50,12 +65,6 @@ public class StageProgressionManager : MonoBehaviour
     public void RestoreStage(int stage)
     {
         CurrentStage = Mathf.Max(1, stage);
-    }
-
-    public List<ItemDataSO> GetEnhancementTokenPool()
-    {
-        var stageData = GetCurrentStageData();
-        return stageData?.equipmentDropPool ?? new List<ItemDataSO>();
     }
 
     public List<ItemDataSO> GetCombatTokenPool()

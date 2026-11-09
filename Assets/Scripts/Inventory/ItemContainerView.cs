@@ -227,4 +227,11 @@ public class ItemContainerView : MonoBehaviour
         foreach (var slot in _slots)
             if (slot != null) slot.SetHighlight(false);
     }
+
+    public ItemView GetItemView(ItemInstance instance)
+    {
+        if (instance == null) return null;
+        _itemViews.TryGetValue(instance, out var view);
+        return view;
+    }
 }

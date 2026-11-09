@@ -14,14 +14,16 @@ public class CombatVisualService : MonoBehaviour
 
     private void OnCombatAction(CombatActionEvent e)
     {
-        Debug.Log($"CombatVisualService: Received {e.ActionType} for {e.Actor?.name}");
+        // Multiple defensive checks for destroyed/null GameObjects
         if (e.Actor == null) return;
+        if (e.Actor.Equals(null)) return;
+        if (!e.Actor) return;
+        if (!e.Actor.activeInHierarchy) return;
+        
         var controller = e.Actor.GetComponentInChildren<CombatAnimatorController>();
-        if (controller == null)
-        {
-            Debug.LogWarning($"CombatVisualService: No CombatAnimatorController found on {e.Actor.name}");
-            return;
-        }
+        if (controller == null) return;
+
+        Debug.Log($"CombatVisualService: Received {e.ActionType} for {e.Actor.name}");
 
         switch (e.ActionType)
         {

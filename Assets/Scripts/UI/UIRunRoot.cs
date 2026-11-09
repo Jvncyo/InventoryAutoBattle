@@ -7,7 +7,7 @@ public class UIRunRoot : MonoBehaviour
     [SerializeField] private RunStateMachine runStateMachine;
     [SerializeField] private CombatManager combatManager;
     [SerializeField] private ItemContainer playerInventory;
-    [SerializeField] private WaveManager waveManager;
+    [SerializeField] private StageProgressionManager stageProgressionManager;
 
     [Header("Actions")]
     [SerializeField] private Button startButton;
@@ -70,6 +70,7 @@ public class UIRunRoot : MonoBehaviour
     }
 
     private RunStateMachine StateMachine => runStateMachine != null ? runStateMachine : RunStateMachine.Instance;
+    private StageProgressionManager StageManager => stageProgressionManager != null ? stageProgressionManager : StageProgressionManager.Instance;
 
     private void StartCombat()
     {
@@ -110,7 +111,7 @@ public class UIRunRoot : MonoBehaviour
     {
         var machine = StateMachine;
         var combat = combatManager != null ? combatManager : CombatManager.Instance;
-        var waves = waveManager != null ? waveManager : WaveManager.Instance;
+        var stages = StageManager;
         bool preparation = machine != null && machine.CurrentState == RunStateMachine.RunState.Preparation;
         bool tokenReward = machine != null && machine.CurrentState == RunStateMachine.RunState.RewardToken;
         bool gameOver = machine != null && machine.CurrentState == RunStateMachine.RunState.GameOver;
@@ -131,7 +132,7 @@ public class UIRunRoot : MonoBehaviour
             saveStatusText.text = machine != null && machine.SaveFailed ? "Save failed: " + machine.StatusMessage : string.Empty;
 
         if (stageText != null)
-            stageText.text = waves != null ? $"Stage {waves.CurrentWave}" : "Stage --";
+            stageText.text = stages != null ? $"Stage {stages.CurrentStage}" : "Stage --";
         if (freeCellsText != null)
         {
             if (playerInventory == null)
@@ -152,7 +153,7 @@ public class UIRunRoot : MonoBehaviour
         UpdateHealth(combat != null ? combat.EnemyActor : null, enemyHPText, enemyHealthSlider, "Enemy");
         if (statusText != null)
             statusText.text = machine != null
-                ? $"{(machine.CurrentState == RunStateMachine.RunState.RewardEquipment ? "Enhancement Reward" : machine.CurrentState.ToString())}  {machine.StatusMessage}  {TokenUseService.Message}" : string.Empty;
+                ? $"{machine.CurrentState}  {machine.StatusMessage}  {TokenUseService.Message}" : string.Empty;
 
         // Inventory interaction and reward modal visibility belong to the FSM's policy.
     }

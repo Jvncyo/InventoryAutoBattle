@@ -24,4 +24,7 @@ MonoBehaviour:
   damageMultiplier: 1
   cooldownMultiplier: 1
   equipmentDropPool: []
-  tokenDropPool: []
+  tokenDropPool:
+  - {fileID: 11400000, guid: c8074201d662f784da17a73598c1031c, type: 2}
+  - {fileID: 11400000, guid: 8cb1f665b95f0c34097699eab35987ca, type: 2}
+  - {fileID: 11400000, guid: 9b616f3f73a0cbf4484f1386a74cf1c9, type: 2}

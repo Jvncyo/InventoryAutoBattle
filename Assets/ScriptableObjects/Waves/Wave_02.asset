@@ -14,10 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WaveDataSO
   WaveNumber: 2
   Enemy: {fileID: 11400000, guid: fd064c351366abf4292272369621df20, type: 2}
-  EnhancementTokenPool:
-  - {fileID: 11400000, guid: e239dda94ca65f543bb519d0111db196, type: 2}
-  - {fileID: 11400000, guid: 41d386228fa79f246a748deb2cfac069, type: 2}
-  - {fileID: 11400000, guid: fc1201bf9c9709242b0a7703e7a9f0d9, type: 2}
+  EnhancementTokenPool: []
   CombatTokenPool:
   - {fileID: 11400000, guid: c8074201d662f784da17a73598c1031c, type: 2}
   - {fileID: 11400000, guid: 8cb1f665b95f0c34097699eab35987ca, type: 2}

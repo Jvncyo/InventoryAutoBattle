@@ -19,11 +19,15 @@ MonoBehaviour:
   Width: 2
   Height: 2
   Icon: {fileID: 0}
+  Subtype: 6
+  CustomShapeOffsets: []
   BaseCooldown: 4
   BaseDamage: 0
   BaseShield: 15
   BaseHeal: 0
+  BaseDamageReduction: 0
   Triggers: []
   AcceptableTokens: 0200000003000000
+  TokenCategory: 0
   TokenType: 0
   TokenEffect: {fileID: 0}
