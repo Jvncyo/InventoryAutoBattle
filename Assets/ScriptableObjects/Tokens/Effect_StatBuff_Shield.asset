@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Effect_StatBuff_Shield
   m_EditorClassIdentifier: Assembly-CSharp::StatBuffEffectSO
   DamageBonus: 0
-  ShieldBonus: 3
+  ShieldBonus: 6
   CooldownDeltaRate: 0

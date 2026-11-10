@@ -21,12 +21,16 @@ MonoBehaviour:
   Icon: {fileID: 0}
   Subtype: 6
   CustomShapeOffsets: []
-  BaseCooldown: 4
+  BaseCooldown: 500
   BaseDamage: 0
-  BaseShield: 15
+  BaseShield: 20
   BaseHeal: 0
+  ShieldInitialOnly: 1
   BaseDamageReduction: 0
-  Triggers: []
+  Triggers:
+  - Type: 0
+    Value: 0
+    Cooldown: 0
   AcceptableTokens: 0200000003000000
   TokenCategory: 0
   TokenType: 0

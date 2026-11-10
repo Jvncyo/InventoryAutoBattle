@@ -10,11 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1dc5a41fc1b4dd94cbe720fe92c2deb3, type: 3}
-  m_Name: Slime
+  m_Name: Orc_Warchief
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDataSO
-  Id: enemy_slime
-  EnemyName: Slime
-  MaxHP: 30
-  AttackPower: 3
-  AttackInterval: 2.5
+  Id: enemy_warchief
+  EnemyName: Orc (Warchief)
+  MaxHP: 150
+  AttackPower: 12
+  AttackInterval: 2.6
   Icon: {fileID: 0}
+  Archetype: 1
+  IsBoss: 0
+  visualPrefab: {fileID: 0}
+  BaseMaxHP: 0
+  BaseDamage: 0
+  BaseCooldown: 0
+  BaseShield: 0
+  SpecialTriggers: []

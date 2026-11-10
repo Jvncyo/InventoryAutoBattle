@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Effect_ImmediateDefense
   m_EditorClassIdentifier: Assembly-CSharp::CombatTokenEffectSO
   Action: 2
-  Amount: 10
+  Amount: 40

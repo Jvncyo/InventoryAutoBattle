@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7f7988d7bf04144e82bd404af2e2753, type: 3}
   m_Name: Effect_StatBuff_Damage
   m_EditorClassIdentifier: Assembly-CSharp::StatBuffEffectSO
-  DamageBonus: 5
+  DamageBonus: 3
   ShieldBonus: 0
   CooldownDeltaRate: 0

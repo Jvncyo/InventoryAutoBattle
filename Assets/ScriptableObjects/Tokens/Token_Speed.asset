@@ -27,4 +27,4 @@ MonoBehaviour:
   AcceptableTokens: 
   TokenCategory: 1
   TokenType: 3
-  TokenEffect: {fileID: 11400000, guid: 5d89e4c8f5b7a6c4b8a9e2d1c3f4e5a6, type: 2}
+  TokenEffect: {fileID: 11400000, guid: f7f4bad40a44d7b42ba86f8055dbb2bf, type: 2}

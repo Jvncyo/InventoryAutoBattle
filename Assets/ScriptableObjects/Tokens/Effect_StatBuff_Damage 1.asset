@@ -9,12 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1dc5a41fc1b4dd94cbe720fe92c2deb3, type: 3}
-  m_Name: Goblin
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyDataSO
-  Id: enemy_goblin
-  EnemyName: Goblin
-  MaxHP: 50
-  AttackPower: 5
-  AttackInterval: 2
-  Icon: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: b7f7988d7bf04144e82bd404af2e2753, type: 3}
+  m_Name: Effect_StatBuff_Damage 1
+  m_EditorClassIdentifier: Assembly-CSharp::StatBuffEffectSO
+  DamageBonus: 7
+  ShieldBonus: 0
+  CooldownDeltaRate: 0

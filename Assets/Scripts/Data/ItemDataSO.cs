@@ -52,10 +52,13 @@ public class ItemDataSO : ScriptableObject
     public float BaseDamage = 0f;
     public float BaseShield = 0f;
     public float BaseHeal = 0f;
-    
-    /// <summary>기본 데미지 감소율 (0~1, 아머 아이템용)</summary>
+
+    /// <summary>true: 전투 시작 시 실드를 1회만 부여, 쿨타임마다 재생성하지 않음. false: 매 쿨타임마다 재생성</summary>
+    public bool ShieldInitialOnly = false;
+
+    /// <summary>기본 데미지 감소율 (0~1, 아머 아이템용). 곱연산으로 적용되므로 100% 완전 무효화는 불가능합니다.</summary>
     [Range(0f, 1f)] public float BaseDamageReduction = 0f;
-    
+
     public List<EquipmentTrigger> Triggers = new();
     public List<TokenType> AcceptableTokens = new();
 

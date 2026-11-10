@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Effect_Heal
   m_EditorClassIdentifier: Assembly-CSharp::CombatTokenEffectSO
   Action: 1
-  Amount: 15
+  Amount: 30

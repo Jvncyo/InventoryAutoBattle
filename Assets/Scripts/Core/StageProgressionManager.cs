@@ -25,6 +25,12 @@ public class StageProgressionManager : MonoBehaviour
             StartRun();
     }
 
+    private void Start()
+    {
+        // Awake 실행 순서 문제(다른 오브젝트의 Awake가 이보다 먼저 실행되는 경우) 대비
+        if (Instance == null) Instance = this;
+    }
+
     public bool IsBossStage() => (CurrentStage % 10 == 0);
     public bool IsRunActive() => _isRunActive;
 

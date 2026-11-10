@@ -26,7 +26,10 @@ MonoBehaviour:
   BaseShield: 0
   BaseHeal: 0
   BaseDamageReduction: 0
-  Triggers: []
+  Triggers:
+  - Type: 0
+    Value: 0
+    Cooldown: 0
   AcceptableTokens: 0100000003000000
   TokenCategory: 0
   TokenType: 0

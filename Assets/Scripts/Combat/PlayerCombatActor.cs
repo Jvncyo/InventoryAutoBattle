@@ -5,7 +5,20 @@ using UnityEngine;
 public class PlayerCombatActor : CombatActor
 {
     [SerializeField] private float startingMaxHP = 100f;
-    [SerializeField] private ItemContainer playerInventory;
+    [SerializeField] private ItemContainer _playerInventory;
+
+    private ItemContainer _resolvedInventory;
+
+    private ItemContainer ResolvedInventory
+    {
+        get
+        {
+            if (_resolvedInventory != null) return _resolvedInventory;
+            return _resolvedInventory = _playerInventory != null 
+                ? _playerInventory 
+                : (GameManager.Instance != null ? GameManager.Instance.PlayerInventory : null);
+        }
+    }
 
     private void Awake()
     {
@@ -37,24 +50,22 @@ public class PlayerCombatActor : CombatActor
     /// </summary>
     public override void TakeDamage(float amount)
     {
-        // 1. 방어구 데미지 감소율 계산 (인벤토리의 모든 장비 합산)
-        float totalDamageReduction = 0f;
-        if (playerInventory != null)
+        // 1. 방어구 데미지 감소율 계산 (곱연산 — 완전 무효화 불가능)
+        float damageMultiplier = 1f;
+        var inv = ResolvedInventory;
+        if (inv != null)
         {
-            var equipments = playerInventory.Items
+            var equipments = inv.Items
                 .Where(i => i.Data.ItemType == ItemType.Equipment && i.Data.BaseDamageReduction > 0f);
-            
+
             foreach (var eq in equipments)
             {
-                totalDamageReduction += eq.Data.BaseDamageReduction;
+                damageMultiplier *= (1f - eq.Data.BaseDamageReduction);
             }
         }
-        
-        // 데미지 감소율 캡 (최대 90%)
-        totalDamageReduction = Mathf.Clamp01(totalDamageReduction);
-        
-        // 2. 실데미지 계산 (감소율 적용)
-        float reducedDamage = amount * (1f - totalDamageReduction);
+
+        // 2. 실데미지 계산 (곱연산 적용)
+        float reducedDamage = amount * damageMultiplier;
         
         // 3. 쉴드 우선 소모
         if (Shield > 0)
@@ -67,9 +78,9 @@ public class PlayerCombatActor : CombatActor
         CurrentHP = Mathf.Max(0, CurrentHP - reducedDamage);
         
         // 4. OnDamaged 트리거 발동 (장비의 OnDamaged 트리거 처리)
-        if (playerInventory != null && reducedDamage > 0f)
+        if (inv != null && reducedDamage > 0f)
         {
-            var equipments = playerInventory.Items
+            var equipments = inv.Items
                 .Where(i => i.Data.ItemType == ItemType.Equipment);
             
             foreach (var eq in equipments)

@@ -24,7 +24,14 @@ public class CombatManager : MonoBehaviour
     {
         Instance = this;
         _stageManager = StageProgressionManager.Instance;
-        
+
+        // enemyRoot가 인스pector에 할당되지 않은 경우 씬에서 자동 탐색 ( Awake 순서 문제 대비 )
+        if (enemyRoot == null)
+        {
+            var found = GameObject.Find("EnemyRoot");
+            if (found != null) enemyRoot = found.transform;
+        }
+
         // OnDamaged 트리거 구독
         EventBus.Subscribe<EquipmentDamagedTriggerEvent>(OnEquipmentDamagedTrigger);
     }
@@ -36,7 +43,15 @@ public class CombatManager : MonoBehaviour
 
     public void StartCombat(EnemyDataSO enemyData)
     {
-        if (_inCombat || enemyData == null || playerInventory == null ||
+        // StageProgressionManager 인스턴스를 안전하게 해결 (Awake 순서 문제 대비)
+        var stageManager = StageProgressionManager.Instance
+            ?? FindAnyObjectByType<StageProgressionManager>();
+        if (stageManager != null) _stageManager = stageManager;
+
+        // GameManager의 인베토리를 우선 사용, 없으면 시리얼라이즈된 필드 사용
+        var inventory = GameManager.Instance != null ? GameManager.Instance.PlayerInventory : playerInventory;
+
+        if (_inCombat || enemyData == null || inventory == null ||
             playerActor == null || enemyRoot == null)
         {
             Debug.LogError("Cannot start combat: combat references or enemy data are missing.");
@@ -46,7 +61,6 @@ public class CombatManager : MonoBehaviour
         _inCombat = true;
 
         // 적 스폰 (CombatEntityFactory 사용)
-        var stageManager = StageProgressionManager.Instance;
         int currentStage = stageManager != null ? stageManager.CurrentStage : 1;
         
         _enemyActor = CombatEntityFactory.SpawnEnemy(
@@ -68,12 +82,20 @@ public class CombatManager : MonoBehaviour
         var autoAssign = FindAnyObjectByType<AutoAssignCombatTokenTargets>();
         autoAssign?.AssignTargets();
 
-        _currentEquipments = playerInventory.Items
+        _currentEquipments = inventory.Items
             .Where(i => i.Data.ItemType == ItemType.Equipment)
             .ToList();
 
         foreach (var eq in _currentEquipments)
+        {
             eq.ResetCombatState();
+            // ShieldInitialOnly=true 장비는 전투 시작 시 1회 실드 부여
+            if (eq.Data != null && eq.Data.ShieldInitialOnly && eq.Data.BaseShield > 0f)
+            {
+                float initShield = eq.Data.BaseShield + eq.BonusShield;
+                if (initShield > 0f) playerActor?.AddShield(initShield);
+            }
+        }
 
         StartCoroutine(CombatTickRoutine(_currentEquipments));
         EventBus.Publish(new CombatStartedEvent());
@@ -165,7 +187,7 @@ public class CombatManager : MonoBehaviour
         float totalDamage = eq.Data.BaseDamage + eq.BonusDamage;
         if (totalDamage > 0f && _enemyActor != null) _enemyActor.TakeDamage(totalDamage);
 
-        float totalShield = eq.Data.BaseShield + eq.BonusShield;
+        float totalShield = eq.Data.ShieldInitialOnly ? 0f : eq.Data.BaseShield + eq.BonusShield;
         if (totalShield > 0f) playerActor?.AddShield(totalShield);
 
         if (eq.Data.BaseHeal > 0f) playerActor?.Heal(eq.Data.BaseHeal);
