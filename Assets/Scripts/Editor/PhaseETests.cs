@@ -309,6 +309,7 @@ public class PhaseETests
         Assert.IsTrue(_saveManager.TrySave(1, _player, _inventory));
 
         File.WriteAllText(_tempPath, "{ bad }}}");
+        File.WriteAllText(_tempPath + ".bak", "{ worse }}}");
 
         var result = _saveManager.TryLoad(out var data, 6, 6);
         Assert.AreEqual(SaveLoadStatus.Failed, result);
@@ -449,3 +450,5 @@ public class PhaseETests
         // After archive, a fresh load starts a new run (Missing primary, backup is an old run).
         var result = _saveManager.TryLoad(out var data, 6, 6);
         Assert.AreEqual(SaveLoadStatus.Missing, result, "After archive, no valid primary or backup should exist: " + _saveManager.LastError);
+    }
+}
