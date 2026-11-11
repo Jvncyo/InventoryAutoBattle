@@ -88,6 +88,14 @@ public class RunStateMachine : MonoBehaviour
                 if (!_save.TryRestore(data, playerInventory))
                 { FailRecovery(string.IsNullOrEmpty(_save.LastError) ? "Invalid stage configuration." : _save.LastError); return; }
                 combatManager.PlayerActor.Initialize(data.PlayerMaxHP, data.PlayerMaxHP);
+                
+                // 복원 후 인벤토리가 비어있으면 시작 아이템 지급
+                Debug.Log($"[RunStateMachine] After TryRestore - Items.Count={playerInventory.Items.Count}, startingItems={startingItems.Count}");
+                if (playerInventory.Items.Count == 0 && startingItems.Count > 0)
+                {
+                    Debug.Log("[RunStateMachine] Inventory empty after restore, initializing starting items");
+                    InitializeStartingInventory();
+                }
             }
             else
             {

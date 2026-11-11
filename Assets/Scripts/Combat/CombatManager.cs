@@ -51,6 +51,10 @@ public class CombatManager : MonoBehaviour
         // GameManager의 인베토리를 우선 사용, 없으면 시리얼라이즈된 필드 사용
         var inventory = GameManager.Instance != null ? GameManager.Instance.PlayerInventory : playerInventory;
 
+        // enemyRoot가 파괴된 참조(fake null)인 경우 런타임에 재탐색 (AutoAssignCombatTokenTargets에서 RectTransform 추가 시 발생 가능)
+        if (enemyRoot == null)
+            enemyRoot = GameObject.Find("EnemyRoot")?.transform;
+
         if (_inCombat || enemyData == null || inventory == null ||
             playerActor == null || enemyRoot == null)
         {
