@@ -20,7 +20,7 @@ MonoBehaviour:
   Icon: {fileID: 0}
   Archetype: 1
   IsBoss: 0
-  visualPrefab: {fileID: 0}
+  visualPrefab: {fileID: 4404139715982570026, guid: 06ac2adfb1d4e674287d72c8b32e6b41, type: 3}
   BaseMaxHP: 0
   BaseDamage: 0
   BaseCooldown: 0

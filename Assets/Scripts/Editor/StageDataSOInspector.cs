@@ -162,7 +162,7 @@ public class StageDataSOInspector : Editor
         float finalCooldown = stats.cooldown / stageData.cooldownMultiplier;
         float finalShield = stats.shield * stageData.hpMultiplier;
 
-        EditorGUILayout.BeginVertical("insideBox");
+        EditorGUILayout.BeginVertical("HelpBox");
         
         // HP row
         EditorGUILayout.BeginHorizontal();

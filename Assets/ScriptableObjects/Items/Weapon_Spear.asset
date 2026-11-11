@@ -25,6 +25,7 @@ MonoBehaviour:
   BaseDamage: 38
   BaseShield: 0
   BaseHeal: 0
+  ShieldInitialOnly: 1
   BaseDamageReduction: 0
   Triggers:
   - Type: 0
