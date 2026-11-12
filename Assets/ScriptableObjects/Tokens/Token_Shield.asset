@@ -13,12 +13,13 @@ MonoBehaviour:
   m_Name: Token_Shield
   m_EditorClassIdentifier: Assembly-CSharp::ItemDataSO
   Id: token_shield
-  DisplayName: Shield Token
+  DisplayName: "\uC2E4\uB4DC \uD1A0\uD070"
   ItemType: 1
   Rarity: 1
   Width: 1
   Height: 1
   Icon: {fileID: 2899943770506906129, guid: fd366209c6a1c0d43be84bf882bbd2c1, type: 3}
+  itemColor: {r: 0.58431375, g: 0.34901962, b: 0.7137255, a: 1}
   Subtype: 0
   CustomShapeOffsets: []
   BaseCooldown: 3

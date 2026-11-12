@@ -8,6 +8,7 @@ public class EnemyCombatActor : CombatActor
     protected float _currentCooldown;
     protected float _baseCooldown;
     protected int _currentStageIndex = 1;
+    public string EnemyName { get; private set; }
 
     public void Initialize(
         EnemyDataSO data,
@@ -19,6 +20,7 @@ public class EnemyCombatActor : CombatActor
         _data = data;
         _currentStageIndex = stageIndex;
         _attackMultiplier = attackMultiplier;
+        EnemyName = data.EnemyName;
 
         // V5 스케일링 API 사용 (현재 스테이지 인덱스 사용)
         var stats = data.GetLegacyStatsForStage(_currentStageIndex);

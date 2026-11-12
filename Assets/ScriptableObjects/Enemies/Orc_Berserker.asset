@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Orc_Berserker
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDataSO
   Id: enemy_berserker
-  EnemyName: Orc (Berserker)
+  EnemyName: "\uC624\uD06C (Berserker)"
   MaxHP: 105
   AttackPower: 13
   AttackInterval: 1.8

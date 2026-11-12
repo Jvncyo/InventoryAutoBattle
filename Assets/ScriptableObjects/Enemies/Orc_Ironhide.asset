@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Orc_Ironhide
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDataSO
   Id: enemy_ironhide
-  EnemyName: Orc (Ironhide)
+  EnemyName: "\uC624\uD06C (Ironhide)"
   MaxHP: 120
   AttackPower: 9
   AttackInterval: 2.8

@@ -13,12 +13,13 @@ MonoBehaviour:
   m_Name: Shield_KiteShield
   m_EditorClassIdentifier: Assembly-CSharp::ItemDataSO
   Id: item_kiteshield
-  DisplayName: Kite Shield
+  DisplayName: "\uCE74\uC774\uD2B8 \uC2E4\uB4DC"
   ItemType: 0
   Rarity: 1
   Width: 2
   Height: 1
   Icon: {fileID: 9202361132051165479, guid: efb57030f4be9554c839e4147b1035c3, type: 3}
+  itemColor: {r: 1, g: 1, b: 1, a: 1}
   Subtype: 6
   CustomShapeOffsets: []
   BaseCooldown: 30

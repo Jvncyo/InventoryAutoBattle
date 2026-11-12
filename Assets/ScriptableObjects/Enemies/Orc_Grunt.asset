@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Orc_Grunt
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDataSO
   Id: enemy_grunt
-  EnemyName: Orc (Grunt)
+  EnemyName: "\uC624\uD06C (Grunt)"
   MaxHP: 65
   AttackPower: 7
   AttackInterval: 2.2

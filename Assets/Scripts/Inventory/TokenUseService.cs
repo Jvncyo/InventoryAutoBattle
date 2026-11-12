@@ -22,6 +22,10 @@ public static class TokenUseService
         if (token == null || token.Data == null || token.Data.ItemType != ItemType.Token
             || token.CurrentContainer == null || Processing.Contains(token))
         { message = "Token unavailable."; return false; }
+        // 보상 선택 중에는 토큰 사용 불가 (이동/삭제만 가능)
+        var state = RunStateMachine.Instance;
+        if (state != null && state.CurrentState == RunStateMachine.RunState.RewardPhase)
+        { message = "Tokens can only be used in combat."; return false; }
         if (!InventoryInteractionPolicy.CanInteract(token))
         { message = "Cannot use in this state."; return false; }
         var inventory = GameManager.Instance != null ? GameManager.Instance.PlayerInventory : null;

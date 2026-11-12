@@ -13,12 +13,13 @@ MonoBehaviour:
   m_Name: Weapon_Greatsword
   m_EditorClassIdentifier: Assembly-CSharp::ItemDataSO
   Id: item_greatsword
-  DisplayName: Great Sword
+  DisplayName: "\uB300\uAC80"
   ItemType: 0
   Rarity: 1
   Width: 2
   Height: 2
   Icon: {fileID: -4953552331025769593, guid: 23d0bc126641cdd4ab5be26d4ea64591, type: 3}
+  itemColor: {r: 1, g: 1, b: 1, a: 1}
   Subtype: 5
   CustomShapeOffsets: []
   BaseCooldown: 3.8

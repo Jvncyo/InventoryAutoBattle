@@ -13,12 +13,13 @@ MonoBehaviour:
   m_Name: Weapon_Axe
   m_EditorClassIdentifier: Assembly-CSharp::ItemDataSO
   Id: item_axe
-  DisplayName: Axe
+  DisplayName: "\uC804\uD22C\uB3C4\uB07C"
   ItemType: 0
   Rarity: 3
   Width: 2
   Height: 3
   Icon: {fileID: 4638157690744355960, guid: f2f9c154e4a5c7d4aa6fce4d524dd0c1, type: 3}
+  itemColor: {r: 1, g: 1, b: 1, a: 1}
   Subtype: 5
   CustomShapeOffsets:
   - {x: 0, y: 0}

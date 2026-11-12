@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Orc_Boss
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDataSO
   Id: enemy_boss
-  EnemyName: Orc (Boss)
+  EnemyName: "\uC624\uD06C (Boss)"
   MaxHP: 170
   AttackPower: 15
   AttackInterval: 3.4
@@ -21,7 +21,7 @@ MonoBehaviour:
   Archetype: 0
   IsBoss: 1
   visualPrefab: {fileID: 4404139715982570026, guid: 86fa9412677c4c341bfc2c9fb4ed0692, type: 3}
-  BaseMaxHP: 350
+  BaseMaxHP: 150
   BaseDamage: 24
   BaseCooldown: 2.5
   BaseShield: 35

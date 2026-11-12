@@ -13,12 +13,13 @@ MonoBehaviour:
   m_Name: Weapon_Spear
   m_EditorClassIdentifier: Assembly-CSharp::ItemDataSO
   Id: item_spear
-  DisplayName: Spear
+  DisplayName: "\uCC3D"
   ItemType: 0
   Rarity: 2
   Width: 1
   Height: 3
   Icon: {fileID: -124331371322421752, guid: 726e630efaf4b4a49b2312138f5e51ca, type: 3}
+  itemColor: {r: 1, g: 1, b: 1, a: 1}
   Subtype: 5
   CustomShapeOffsets: []
   BaseCooldown: 3

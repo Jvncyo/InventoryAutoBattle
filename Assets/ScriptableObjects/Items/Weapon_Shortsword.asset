@@ -13,12 +13,13 @@ MonoBehaviour:
   m_Name: Weapon_Shortsword
   m_EditorClassIdentifier: Assembly-CSharp::ItemDataSO
   Id: item_shortsword
-  DisplayName: Short Sword
+  DisplayName: "\uB2E8\uAC80"
   ItemType: 0
   Rarity: 0
   Width: 1
   Height: 2
   Icon: {fileID: -5235976536294821228, guid: d47acdcfed3c6de4c90bcc5bfe33afce, type: 3}
+  itemColor: {r: 1, g: 1, b: 1, a: 1}
   Subtype: 5
   CustomShapeOffsets: []
   BaseCooldown: 2.2

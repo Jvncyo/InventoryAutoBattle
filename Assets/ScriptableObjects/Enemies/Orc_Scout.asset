@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Orc_Scout
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDataSO
   Id: enemy_scout
-  EnemyName: Orc (Scout)
+  EnemyName: "\uC624\uD06C (Scout)"
   MaxHP: 45
   AttackPower: 5
   AttackInterval: 1.3

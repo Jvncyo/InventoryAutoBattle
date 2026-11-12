@@ -14,10 +14,11 @@ public static class ItemDiscardService
         { message = "Nothing to discard."; return false; }
         if (Processing.Contains(item)) { message = "Item is being processed."; return false; }
 
-        // Prep 또는 RewardToken 상태에서만 삭제 가능
+        // Prep, RewardToken 또는 RewardPhase 상태에서만 삭제 가능
         var state = RunStateMachine.Instance;
         if (state != null && state.CurrentState != RunStateMachine.RunState.Preparation
-            && state.CurrentState != RunStateMachine.RunState.RewardToken)
+            && state.CurrentState != RunStateMachine.RunState.RewardToken
+            && state.CurrentState != RunStateMachine.RunState.RewardPhase)
         { message = "Can only discard before combat."; return false; }
 
         // 컨테이너에 속해 있는 아이템만 삭제 대상.

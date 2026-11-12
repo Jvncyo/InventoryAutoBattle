@@ -13,12 +13,13 @@ MonoBehaviour:
   m_Name: Armor_LeatherVest
   m_EditorClassIdentifier: Assembly-CSharp::ItemDataSO
   Id: item_leathervest
-  DisplayName: Leather Vest
+  DisplayName: "\uAC00\uC8FD \uC870\uB07C"
   ItemType: 0
   Rarity: 0
   Width: 2
   Height: 1
   Icon: {fileID: 6384185024454366596, guid: 4d5183ed94f052f43b7cd82de2bbed97, type: 3}
+  itemColor: {r: 1, g: 1, b: 1, a: 1}
   Subtype: 2
   CustomShapeOffsets: []
   BaseCooldown: 500

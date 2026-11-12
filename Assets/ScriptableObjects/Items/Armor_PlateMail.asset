@@ -13,12 +13,13 @@ MonoBehaviour:
   m_Name: Armor_PlateMail
   m_EditorClassIdentifier: Assembly-CSharp::ItemDataSO
   Id: item_platemail
-  DisplayName: Plate Mail
+  DisplayName: "\uD310\uAE08 \uAC11\uC637"
   ItemType: 0
   Rarity: 1
   Width: 2
   Height: 2
   Icon: {fileID: 3293746629164017245, guid: 66bb37e340d3a894d903791ce9fbb98a, type: 3}
+  itemColor: {r: 1, g: 1, b: 1, a: 1}
   Subtype: 2
   CustomShapeOffsets: []
   BaseCooldown: 500

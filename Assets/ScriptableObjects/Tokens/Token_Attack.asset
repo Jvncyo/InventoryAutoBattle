@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: Token_Attack
   m_EditorClassIdentifier: Assembly-CSharp::ItemDataSO
   Id: token_attack
-  DisplayName: Attack Token
+  DisplayName: "\uAC15\uD0C0 \uD1A0\uD070"
   ItemType: 1
   Rarity: 0
   Width: 1
   Height: 1
   Icon: {fileID: 2899943770506906129, guid: fd366209c6a1c0d43be84bf882bbd2c1, type: 3}
-  itemColor: {r: 1, g: 0, b: 0, a: 1}
+  itemColor: {r: 0.90588236, g: 0.29803923, b: 0.23529412, a: 1}
   Subtype: 0
   CustomShapeOffsets: []
   BaseCooldown: 3

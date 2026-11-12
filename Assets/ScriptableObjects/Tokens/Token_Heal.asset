@@ -13,12 +13,13 @@ MonoBehaviour:
   m_Name: Token_Heal
   m_EditorClassIdentifier: Assembly-CSharp::ItemDataSO
   Id: token_heal
-  DisplayName: Potion Token
+  DisplayName: "\uD68C\uBCF5 \uD1A0\uD070"
   ItemType: 1
   Rarity: 0
   Width: 1
   Height: 1
   Icon: {fileID: 2899943770506906129, guid: fd366209c6a1c0d43be84bf882bbd2c1, type: 3}
+  itemColor: {r: 0.18039216, g: 0.8, b: 0.44313726, a: 1}
   Subtype: 0
   CustomShapeOffsets: []
   BaseCooldown: 3

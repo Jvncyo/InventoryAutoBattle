@@ -12,13 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58390074bc3d0e34089ce1c0c6034fc9, type: 3}
   m_Name: Token_DirectDamage
   m_EditorClassIdentifier: Assembly-CSharp::ItemDataSO
-  Id: token_directdamage
-  DisplayName: Lightning Token
+  Id: token_Attack 2
+  DisplayName: "\uBC88\uAC1C \uD1A0\uD070"
   ItemType: 1
   Rarity: 0
   Width: 1
   Height: 1
   Icon: {fileID: 2899943770506906129, guid: fd366209c6a1c0d43be84bf882bbd2c1, type: 3}
+  itemColor: {r: 0.94509804, g: 0.76862746, b: 0.05882353, a: 1}
   Subtype: 0
   CustomShapeOffsets: []
   BaseCooldown: 3
@@ -31,4 +32,4 @@ MonoBehaviour:
   AcceptableTokens: 
   TokenCategory: 1
   TokenType: 5
-  TokenEffect: {fileID: 11400000, guid: 239b3df9accb1ad468debeaf036eb43f, type: 2}
+  TokenEffect: {fileID: 11400000, guid: ead70ea5fba958b4da5f42b209a8ca17, type: 2}

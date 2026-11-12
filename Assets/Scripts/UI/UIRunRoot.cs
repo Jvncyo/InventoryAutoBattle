@@ -145,12 +145,13 @@ public class UIRunRoot : MonoBehaviour
                 for (int y = 0; y < playerInventory.Height; y++)
                     for (int x = 0; x < playerInventory.Width; x++)
                         if (playerInventory.GetItemAt(x, y) == null) freeCells++;
-                freeCellsText.text = $"Free cells: {freeCells}/{playerInventory.Width * playerInventory.Height}";
+                freeCellsText.text = $"남은 공간 : {freeCells}/{playerInventory.Width * playerInventory.Height}";
             }
         }
 
-        UpdateHealth(combat != null ? combat.PlayerActor : null, playerHPText, playerHealthSlider, "Player");
-        UpdateHealth(combat != null ? combat.EnemyActor : null, enemyHPText, enemyHealthSlider, "Enemy");
+        string enemyName = (combat != null && combat.EnemyActor != null) ? combat.EnemyActor.EnemyName : "오크";
+        UpdateHealth(combat != null ? combat.PlayerActor : null, playerHPText, playerHealthSlider, "플레이어");
+        UpdateHealth(combat != null ? combat.EnemyActor : null, enemyHPText, enemyHealthSlider, enemyName);
         if (statusText != null)
             statusText.text = machine != null
                 ? $"{machine.CurrentState}  {machine.StatusMessage}  {TokenUseService.Message}" : string.Empty;

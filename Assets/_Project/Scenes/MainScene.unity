@@ -9185,7 +9185,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Free cells: 36/36'
+  m_Text: "\uB0A8\uC740 \uACF5\uAC04 : 36/36"
 --- !u!222 &1942858218
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -11534,7 +11534,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6350001614589919709, guid: 3cda7e28ac4cb464094eff105152f493, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6573314403802037942, guid: 3cda7e28ac4cb464094eff105152f493, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -11586,7 +11586,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8290414020932987338, guid: 3cda7e28ac4cb464094eff105152f493, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: -600
       objectReference: {fileID: 0}
     - target: {fileID: 8290414020932987338, guid: 3cda7e28ac4cb464094eff105152f493, type: 3}
       propertyPath: m_SizeDelta.y
@@ -11622,7 +11622,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8290414020932987338, guid: 3cda7e28ac4cb464094eff105152f493, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 8290414020932987338, guid: 3cda7e28ac4cb464094eff105152f493, type: 3}
       propertyPath: m_AnchoredPosition.y

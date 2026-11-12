@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Effect_Shield
   m_EditorClassIdentifier: Assembly-CSharp::CombatTokenEffectSO
   Action: 2
-  Amount: 10
+  Amount: 50

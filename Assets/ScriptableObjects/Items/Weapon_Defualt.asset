@@ -13,12 +13,13 @@ MonoBehaviour:
   m_Name: Weapon_Defualt
   m_EditorClassIdentifier: Assembly-CSharp::ItemDataSO
   Id: item_default_weapon
-  DisplayName: Old Dagger
+  DisplayName: "\uB0A1\uC740 \uD55C\uC190\uAC80"
   ItemType: 0
   Rarity: 0
   Width: 1
   Height: 1
   Icon: {fileID: -6126569861707796909, guid: 67c3e94278d03454ba67b27b5257f4a0, type: 3}
+  itemColor: {r: 1, g: 1, b: 1, a: 1}
   Subtype: 5
   CustomShapeOffsets: []
   BaseCooldown: 1.2

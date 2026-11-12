@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Orc_Shaman
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDataSO
   Id: enemy_shaman
-  EnemyName: Orc (Shaman)
+  EnemyName: "\uC624\uD06C (Shaman)"
   MaxHP: 85
   AttackPower: 11
   AttackInterval: 2.5

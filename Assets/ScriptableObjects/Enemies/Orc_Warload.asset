@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Orc_Warload
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDataSO
   Id: enemy_warload
-  EnemyName: Orc (Warload)
+  EnemyName: "\uC624\uD06C (Warload)"
   MaxHP: 210
   AttackPower: 14
   AttackInterval: 2.8

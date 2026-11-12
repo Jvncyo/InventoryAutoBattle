@@ -13,12 +13,13 @@ MonoBehaviour:
   m_Name: Armor_Buckler
   m_EditorClassIdentifier: Assembly-CSharp::ItemDataSO
   Id: item_buckler
-  DisplayName: Leather Buckler
+  DisplayName: "\uAC00\uC8FD \uBC84\uD074\uB7EC"
   ItemType: 0
   Rarity: 0
   Width: 1
   Height: 1
   Icon: {fileID: -6242746305532374299, guid: ca05126e2c62fbf45bdca80016f7ecef, type: 3}
+  itemColor: {r: 1, g: 1, b: 1, a: 1}
   Subtype: 6
   CustomShapeOffsets: []
   BaseCooldown: 500

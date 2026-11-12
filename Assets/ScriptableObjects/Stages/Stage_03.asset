@@ -33,8 +33,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b37e25375e1793e48a8025abecab46f8, type: 2}
   tokenDropPool:
   - {fileID: 11400000, guid: 8633a429cde10f94f995bb301cf7a768, type: 2}
-  - {fileID: 11400000, guid: c6c8cd10f4b5cef4f8fc009a3e93e597, type: 2}
   - {fileID: 11400000, guid: c8074201d662f784da17a73598c1031c, type: 2}
   - {fileID: 11400000, guid: 8cb1f665b95f0c34097699eab35987ca, type: 2}
   - {fileID: 11400000, guid: 9b616f3f73a0cbf4484f1386a74cf1c9, type: 2}
-  - {fileID: 11400000, guid: fd6916bc3cc9dc14f8d1122d1403a068, type: 2}
+  - {fileID: 11400000, guid: 0717d31269a58894f924b64a19261e5d, type: 2}
