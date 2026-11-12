@@ -5537,7 +5537,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AudioManager
   bgmNormal: {fileID: 8300000, guid: 19494be9b26ecdf40a4c3b39d0b0ebc1, type: 3}
   bgmBattle: {fileID: 8300000, guid: 68ad15010b6957c4c84c6c13e927efba, type: 3}
-  bgmVolume: 0.5
+  bgmVolume: 0.8
   playerAttack:
   - {fileID: 8300000, guid: 2137024c3120452429b65affa0a54f1e, type: 3}
   - {fileID: 8300000, guid: 5806d35660c700842bdde5309f509c65, type: 3}
