@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CombatTokenEffectSO
   Action: 1
   Amount: 50
+  EffectPrefab: {fileID: 5970181440765613895, guid: 15664d6a6710e6b4388a6d7ffbfc0c0a, type: 3}
