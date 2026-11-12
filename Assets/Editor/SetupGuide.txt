@@ -1,0 +1,136 @@
+# MainScene Setup Guide
+
+## Overview
+This document explains what assets and references need to be set up in the Unity Editor for the MainScene to function correctly with the V4.3 Roguelike specification.
+
+## Created Assets (Already in Project)
+
+### 1. Prefabs
+- **Assets/Prefabs/Inventory/ItemView.prefab** (NEEDS TO BE CREATED)
+  - Contains: ItemView component + UI (Icon, NameText)
+  - This prefab is referenced by:
+    - GameManager.itemPrefab
+    - RewardManager.itemPrefab  
+    - InventorySystem ItemContainerView.itemPrefab
+    - TokenRewardTray ItemContainerView.itemPrefab
+
+### 2. ScriptableObjects
+- **Assets/ScriptableObjects/Effects/Effect_AttackUp.asset**
+- **Assets/ScriptableObjects/Effects/Effect_ShieldUp.asset**
+- **Assets/ScriptableObjects/Effects/Effect_Haste.asset**
+- **Assets/ScriptableObjects/Items/Sword_Base.asset**
+- **Assets/ScriptableObjects/Items/Shield_Base.asset**
+- **Assets/ScriptableObjects/Items/Amulet_Haste.asset**
+- **Assets/ScriptableObjects/Items/Ring_Vitality.asset**
+- **Assets/ScriptableObjects/Items/Boots_Speed.asset**
+- **Assets/ScriptableObjects/Enemies/Goblin.asset**
+- **Assets/ScriptableObjects/Enemies/Skeleton.asset**
+- **Assets/ScriptableObjects/Enemies/Slime.asset**
+- **Assets/ScriptableObjects/Waves/Wave_01.asset**
+- **Assets/ScriptableObjects/Waves/Wave_02.asset**
+- **Assets/ScriptableObjects/Waves/Wave_02.asset**
+
+## Inspector Reference Assignments
+
+### GameManager (GameObject: GameManager)
+| Field | Target | Notes |
+|-------|--------|-------|
+| playerInventory | Canvas/InventorySystem | 6x6 ItemContainer |
+| tokenRewardTray | Canvas/TokenRewardTray | 5x1 ItemContainer |
+| equipmentDraftUI | Canvas/EquipmentDraftUI | EquipmentDraftUI component |
+| saveManager | (GameManager has its own) | |
+| combatManager | (Same GameObject) | |
+| rewardManager | (Same GameObject) | |
+| waveManager | (Same GameObject) | |
+| stateMachine | (Same GameObject) | |
+
+### InventorySystem (Canvas/InventorySystem)
+| Field | Target | Notes |
+|-------|--------|-------|
+| itemPrefab | Assets/Prefabs/Inventory/ItemView.prefab | Must be assigned |
+
+### TokenRewardTray (Canvas/TokenRewardTray)
+| Field | Target | Notes |
+|-------|--------|-------|
+| itemPrefab | Assets/Prefabs/Inventory/ItemView.prefab | Must be assigned |
+
+### ItemContainerView (Component on InventorySystem and TokenRewardTray)
+| Field | Target | Notes |
+|-------|--------|-------|
+| slotsParent | Canvas/InventorySystem/SlotsContainer (or TokenRewardTray/SlotsParent) | Auto-assigned via BuildGrid() |
+| itemsParent | Canvas/InventorySystem/ItemsContainer (or TokenRewardTray/ItemsParent) | Auto-assigned via BuildGrid() |
+| itemPrefab | Assets/Prefabs/Inventory/ItemView.prefab | Must be assigned |
+
+### RewardManager (GameObject: RewardManager)
+| Field | Target | Notes |
+|-------|--------|-------|
+| itemPrefab | Assets/Prefabs/Inventory/ItemView.prefab | Must be assigned |
+| equipmentDraftUI | Canvas/EquipmentDraftUI | Already assigned |
+| tokenRewardTray | Canvas/TokenRewardTray | Already assigned |
+| equipmentDropPool | List of ItemDataSO | Assign Sword_Base, Shield_Base, etc. |
+| tokenDropPool | List of ItemDataSO | Assign Token_Attack, Token_Defense, etc. |
+
+### RunStateMachine (Component on GameManager)
+| Field | Target | Notes |
+|-------|--------|-------|
+| combatManager | (Same GameObject) | Already assigned |
+| rewardManager | (Same GameObject) | Already assigned |
+| equipmentDraftUI | Canvas/EquipmentDraftUI | Must be assigned |
+| playerInventory | Canvas/InventorySystem | Must be assigned |
+| waveManager | (Same GameObject) | Already assigned |
+
+### CombatManager (Component on GameManager)
+| Field | Target | Notes |
+|-------|--------|-------|
+| playerInventory | Canvas/InventorySystem | Must be assigned |
+| playerActor | (Child GameObject or findable) | |
+| enemyActor | (Findable in scene) | |
+
+### EquipmentDraftUI (Canvas/EquipmentDraftUI)
+| Field | Target | Notes |
+|-------|--------|-------|
+| draftModalPrefab | (UI Prefab) | Needs UI prefab for the modal |
+| contentParent | (RectTransform) | Canvas content area |
+| skipButton | (Button) | UI skip button |
+
+### UIManager / ReadyPanel
+| Action | Target | Notes |
+|--------|--------|-------|
+| OnClick() event on Start Button | RunStateMachine | Set up: OnStartCombatButtonClicked |
+
+## How to Create Missing Assets
+
+### 1. ItemView.prefab
+In Unity Editor:
+1. Go to `Assets/Prefabs/Inventory/`
+2. Create a new UI prefab named `ItemView`
+3. Structure: Root GameObject > RectTransform > CanvasGroup > Image (background) + Text (name) + Image (icon)
+4. Add the `ItemView` component from `Assets/Scripts/Inventory/ItemView.cs`
+5. Assign the Icon and NameText fields in the Inspector
+6. Save the prefab
+
+### 2. ScriptableObject .asset files
+In Unity Editor:
+1. Create each ScriptableObject via `Create > Roguelike/` menu
+2. Or run the `AssetSetup` menu item: `Tools > Setup ItemView Prefab and Assets`
+3. This creates sample SO assets and the ItemView.prefab
+
+### 3. WaveDataSO assets
+In Unity Editor:
+1. Create `Wave_` assets via `Create > Roguelike > Wave Data`
+2. Assign Enemy, EquipmentDropPool, and TokenDropPool
+3. Reference these in GameManager's WaveManager component
+
+## Verification
+After setup, verify:
+1. Game enters Play mode without errors
+2. InventorySystem shows 6x6 grid
+3. TokenRewardTray shows 5x1 grid
+4. Combat starts when pressing the ReadyPanel Start button
+5. Enemy attacks player each tick
+6. Defeating enemy triggers reward phase
+
+## Troubleshooting
+- If `ItemView.prefab` is missing: Recreate it as described above
+- If SO assets are missing: Use the AssetSetup menu or create them manually
+- If references are null: Assign the relevant GameObjects/prefabs in the Inspector

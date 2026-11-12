@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e1d33841768d204d840d314ecd31d1e, type: 3}
+  m_Name: Stage_10
+  m_EditorClassIdentifier: Assembly-CSharp::StageDataSO
+  StageNumber: 10
+  BiomeName: Boss Chamber
+  backgroundPrefab: {fileID: 5581699115959886857, guid: ea1fdd73f0d7a1341b9b4de33ad3a38e, type: 3}
+  commonEnemyPool: []
+  bossEnemy: {fileID: 11400000, guid: 2b2e70c788b678440a9654eaf292f242, type: 2}
+  hpMultiplier: 1.5
+  damageMultiplier: 1.3
+  cooldownMultiplier: 0.9
+  equipmentDropPool:
+  - {fileID: 11400000, guid: 1c236f15c32971e4e93216591395c525, type: 2}
+  - {fileID: 11400000, guid: 00340598537f7904b9caea7b11dcfd67, type: 2}
+  - {fileID: 11400000, guid: 93dafbbbc67405341a1945ca9100dbe7, type: 2}
+  tokenDropPool:
+  - {fileID: 11400000, guid: 8633a429cde10f94f995bb301cf7a768, type: 2}
+  - {fileID: 11400000, guid: c8074201d662f784da17a73598c1031c, type: 2}
+  - {fileID: 11400000, guid: 8cb1f665b95f0c34097699eab35987ca, type: 2}
+  - {fileID: 11400000, guid: 9b616f3f73a0cbf4484f1386a74cf1c9, type: 2}
+  - {fileID: 11400000, guid: 0717d31269a58894f924b64a19261e5d, type: 2}

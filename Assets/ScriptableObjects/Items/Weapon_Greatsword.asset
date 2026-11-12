@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58390074bc3d0e34089ce1c0c6034fc9, type: 3}
+  m_Name: Weapon_Greatsword
+  m_EditorClassIdentifier: Assembly-CSharp::ItemDataSO
+  Id: item_greatsword
+  DisplayName: "\uB300\uAC80"
+  ItemType: 0
+  Rarity: 1
+  Width: 2
+  Height: 2
+  Icon: {fileID: -4953552331025769593, guid: 23d0bc126641cdd4ab5be26d4ea64591, type: 3}
+  itemColor: {r: 1, g: 1, b: 1, a: 1}
+  Subtype: 5
+  CustomShapeOffsets: []
+  BaseCooldown: 3.8
+  BaseDamage: 45
+  BaseShield: 0
+  BaseHeal: 0
+  ShieldInitialOnly: 1
+  BaseDamageReduction: 0
+  Triggers:
+  - Type: 0
+    Value: 0
+    Cooldown: 0
+  AcceptableTokens: 0100000003000000
+  TokenCategory: 0
+  TokenType: 0
+  TokenEffect: {fileID: 0}

@@ -107,3 +107,8 @@ InitTestScene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+scratch/
+Inventory_Token_Roguelike_V4_Spec.md
+Inventory_Token_Roguelike_V5_Spec.md
+.vscode/
+ProjectSettings/SceneTemplateSettings.json

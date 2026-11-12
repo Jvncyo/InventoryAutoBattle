@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: edc3168ebe610b749b5b63045e099310, type: 3}
+  m_Name: Effect_DirectDamage 1
+  m_EditorClassIdentifier: Assembly-CSharp::CombatTokenEffectSO
+  Action: 0
+  Amount: 80
+  EffectPrefab: {fileID: 64309210445870075, guid: e2e284ce399de2040982d8f43accd954, type: 3}
