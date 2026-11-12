@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.UI;
 
 /// <summary>
 /// 전투 토큰(Combat Token) 사용 검증 및 적용 서비스.
@@ -82,22 +81,6 @@ public static class TokenUseService
         finally { Processing.Remove(token); }
     }
 
-    private static Canvas _effectCanvas;
-    private static Canvas EffectCanvas => _effectCanvas ??= CreateEffectCanvas();
-
-    private static Canvas CreateEffectCanvas()
-    {
-        var go = new GameObject("EffectCanvas") { hideFlags = HideFlags.HideInHierarchy };
-        var canvas = go.AddComponent<Canvas>();
-        canvas.renderMode = RenderMode.ScreenSpaceCamera;
-        canvas.worldCamera = Camera.main;
-        canvas.sortingOrder = 100; // 모든 UI 캔버스 위에 렌더링
-        var scaler = go.AddComponent<CanvasScaler>();
-        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-        scaler.referenceResolution = new Vector2(1920, 1080);
-        return canvas;
-    }
-
     private static void PlayTokenEffect(CombatTokenEffectSO effect, CombatActor actor)
     {
         if (effect == null) return;
@@ -111,26 +94,21 @@ public static class TokenUseService
         }
         if (prefab == null) return;
 
-        // Canvas 자식으로 배치하여 SortingLayer 우선순위 확보
-        // World → Viewport → Canvas local 좌표 변환
-        var cam = Camera.main;
-        Transform parent = EffectCanvas.transform;
+        Transform parent = actor != null ? actor.transform : null;
         GameObject go = Object.Instantiate(prefab, parent);
         if (go == null) return;
 
-        // 월드 위치를 Canvas 공간(localPosition)으로 변환
-        // (anchorMin=(0,0), anchorMax=(1,1) 기준의 정규화 좌표)
-        go.transform.localPosition = cam != null
-            ? cam.WorldToViewportPoint(actor != null ? actor.transform.position : Vector3.forward * 20f)
-            : new Vector3(0.5f, 0.5f, 0f);
-
-        // 프리셋 기본 스케일 유지 (오브셋만 제거)
-        go.transform.localRotation = Quaternion.identity;
+        // 프리셋 오브셋 제거
+        go.transform.localPosition = Vector3.zero;
         go.transform.localScale = Vector3.one;
 
         // 애니메이션 재생
         var animator = go.GetComponent<Animator>();
         if (animator != null && animator.enabled) animator.Play("lightning");
+
+        // 캐릭터보다 항상 앞에 보이도록 sortingOrder 설정
+        var sr = go.GetComponent<Renderer>();
+        if (sr != null) sr.sortingOrder = 100;
 
         // 재생 후 파괴 (0.5초 = 애니메이션 0.25초 + 여유)
         Object.Destroy(go, 0.5f);
