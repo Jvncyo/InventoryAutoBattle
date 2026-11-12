@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58390074bc3d0e34089ce1c0c6034fc9, type: 3}
   m_Name: Token_Shield
   m_EditorClassIdentifier: Assembly-CSharp::ItemDataSO
-  Id: token_immediatedefense
+  Id: token_shield
   DisplayName: Shield Token
   ItemType: 1
   Rarity: 1

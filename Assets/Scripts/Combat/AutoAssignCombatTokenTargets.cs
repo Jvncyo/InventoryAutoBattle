@@ -63,36 +63,37 @@ public class AutoAssignCombatTokenTargets : MonoBehaviour
 
     public void AssignTargets()
     {
-        // PlayerHpBar - PlayerCombatActor 연결
-        var playerHpBar = GameObject.Find("PlayerHpBar");
-        if (playerHpBar != null)
-        {
-            var target = playerHpBar.GetComponent<CombatTokenDropTarget>();
-            if (target != null && target.Actor == null)
-            {
-                var playerActor = FindAnyObjectByType<PlayerCombatActor>();
-                if (playerActor != null)
-                    target.GetType().GetField("actor", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.SetValue(target, playerActor);
-            }
-        }
-
-        // EnemyHpBar & EnemyRoot - 전투 중이면 CombatManager.EnemyActor, 아니면 Scene의 적 사용
-        EnemyCombatActor GetEnemyActor()
-        {
-            var cm = CombatManager.Instance;
-            if (cm != null && cm.InCombat && cm.EnemyActor != null) return cm.EnemyActor;
-            return FindAnyObjectByType<EnemyCombatActor>();
-        }
-
+        var playerActor = FindAnyObjectByType<PlayerCombatActor>();
         var enemyActor = GetEnemyActor();
-        foreach (var name in new[] { "EnemyHpBar", "EnemyRoot" })
+
+        // 씬의 모든 CombatTokenDropTarget에 대해 actor 자동 할당
+        foreach (var target in FindObjectsByType<CombatTokenDropTarget>(FindObjectsSortMode.None))
         {
-            var go = GameObject.Find(name);
-            if (go == null) continue;
-            var target = go.GetComponent<CombatTokenDropTarget>();
             if (target == null || target.Actor != null) continue;
-            if (enemyActor != null)
-                target.GetType().GetField("actor", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.SetValue(target, enemyActor);
+
+            CombatActor actor = null;
+            // Enemy 영역 오브젝트인지 확인 (이름 기반)
+            var goName = target.transform.root.name;
+            if (goName.Contains("Enemy") || goName.Contains("EnemyRoot"))
+                actor = enemyActor;
+            else if (goName.Contains("Player") || goName.Contains("PlayerHpBar"))
+                actor = playerActor;
+            else
+            {
+                // 위치 기반으로 Player/Enemy 구분 (y좌표가 높으면 Enemy)
+                var y = target.transform.position.y;
+                actor = y > 0 ? enemyActor : playerActor;
+            }
+
+            if (actor != null)
+                target.GetType().GetField("actor", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.SetValue(target, actor);
         }
+    }
+
+    private EnemyCombatActor GetEnemyActor()
+    {
+        var cm = CombatManager.Instance;
+        if (cm != null && cm.InCombat && cm.EnemyActor != null) return cm.EnemyActor;
+        return FindAnyObjectByType<EnemyCombatActor>();
     }
 }
