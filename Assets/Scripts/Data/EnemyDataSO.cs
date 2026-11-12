@@ -60,11 +60,11 @@ public class EnemyDataSO : ScriptableObject
         float scaledCd = Mathf.Max(0.8f, baseCd * Mathf.Pow(0.97f, stageFactor));
         float scaledShield = baseShield > 0f ? baseShield * (1.0f + 0.12f * stageFactor) : 0f;
 
-        if (IsBoss)
-        {
-            scaledHP *= 2.5f;
-            scaledDmg *= 1.3f;
-        }
+        // if (IsBoss)
+        // {
+        //     scaledHP *= 2.5f;
+        //     scaledDmg *= 1.3f;
+        // }
 
         return (scaledHP, scaledDmg, scaledCd, scaledShield);
     }

@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 58390074bc3d0e34089ce1c0c6034fc9, type: 3}
-  m_Name: Token_Speed
+  m_Name: Token_Shield
   m_EditorClassIdentifier: Assembly-CSharp::ItemDataSO
-  Id: token_speed
-  DisplayName: Speed Token
+  Id: token_immediatedefense
+  DisplayName: Shield Token
   ItemType: 1
-  Rarity: 0
+  Rarity: 1
   Width: 1
   Height: 1
   Icon: {fileID: 2899943770506906129, guid: fd366209c6a1c0d43be84bf882bbd2c1, type: 3}
@@ -30,5 +30,5 @@ MonoBehaviour:
   Triggers: []
   AcceptableTokens: 
   TokenCategory: 1
-  TokenType: 3
-  TokenEffect: {fileID: 11400000, guid: f7f4bad40a44d7b42ba86f8055dbb2bf, type: 2}
+  TokenType: 6
+  TokenEffect: {fileID: 11400000, guid: 462867f450189804cb19c3879b2d0c1d, type: 2}
