@@ -40,6 +40,7 @@ public class ItemView : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
             if (iconImage != null)
             {
                 iconImage.sprite = instance.Data.Icon;
+                iconImage.color = instance.InstanceColor;
                 iconImage.enabled = instance.Data.Icon != null;
             }
             if (nameText != null) nameText.text = instance.Data.DisplayName;

@@ -40,6 +40,7 @@ public class ItemDataSO : ScriptableObject
     [Range(1, 4)] public int Width = 1;
     [Range(1, 4)] public int Height = 1;
     public Sprite Icon;
+    public Color itemColor = Color.white;
 
     [Header("Equipment Exclusive (ItemType == Equipment)")]
     /// <summary>장비 서브타입 (헬멧, 가슴, 장갑, 부츠, 무기, 액세서리)</summary>

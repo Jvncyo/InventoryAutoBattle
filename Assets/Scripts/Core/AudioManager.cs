@@ -39,6 +39,9 @@ public class AudioManager : MonoBehaviour
         }
         Instance = this;
 
+        // Load audio clips from Resources if not assigned in Inspector
+        LoadClipsFromResources();
+
         _bgmSource = GetComponent<AudioSource>();
         if (_bgmSource == null) _bgmSource = gameObject.AddComponent<AudioSource>();
         _bgmSource.loop = true;
@@ -57,6 +60,59 @@ public class AudioManager : MonoBehaviour
         EventBus.Subscribe<CombatStartedEvent>(OnCombatStarted);
         EventBus.Subscribe<CombatActionEvent>(OnCombatAction);
         EventBus.Subscribe<TokenTrayOpenedEvent>(OnTokenTrayOpened);
+
+        // Always play normal BGM at start (game always begins in Preparation state)
+        if (bgmNormal != null)
+        {
+            PlayBgm(bgmNormal);
+        }
+    }
+
+    private void LoadClipsFromResources()
+    {
+        // BGM
+        if (bgmNormal == null) bgmNormal = Resources.Load<AudioClip>("Audio/BGM/Goblins_Den_(Regular)");
+        if (bgmBattle == null) bgmBattle = Resources.Load<AudioClip>("Audio/BGM/Goblins_Dance_(Battle)");
+
+        // SFX arrays - load multiple clips
+        if (playerAttack == null || playerAttack.Length == 0)
+        {
+            playerAttack = new AudioClip[3];
+            for (int i = 1; i <= 3; i++)
+                playerAttack[i - 1] = Resources.Load<AudioClip>("Audio/SFX/07_human_atk_sword_" + i);
+        }
+        if (enemyAttack == null || enemyAttack.Length == 0)
+        {
+            enemyAttack = new AudioClip[3];
+            for (int i = 1; i <= 3; i++)
+                enemyAttack[i - 1] = Resources.Load<AudioClip>("Audio/SFX/17_orc_atk_sword_" + i);
+        }
+        if (playerHit == null || playerHit.Length == 0)
+        {
+            playerHit = new AudioClip[3];
+            for (int i = 1; i <= 3; i++)
+                playerHit[i - 1] = Resources.Load<AudioClip>("Audio/SFX/11_human_damage_" + i);
+        }
+        if (enemyHit == null || enemyHit.Length == 0)
+        {
+            enemyHit = new AudioClip[3];
+            for (int i = 1; i <= 3; i++)
+                enemyHit[i - 1] = Resources.Load<AudioClip>("Audio/SFX/21_orc_damage_" + i);
+        }
+        if (chestOpen == null || chestOpen.Length == 0)
+        {
+            chestOpen = new AudioClip[4];
+            for (int i = 1; i <= 4; i++)
+                chestOpen[i - 1] = Resources.Load<AudioClip>("Audio/SFX/01_chest_open_" + i);
+        }
+        if (playerDeath == null || (playerDeath as AudioClip[])?.Length == 0)
+        {
+            playerDeath = new AudioClip[] { Resources.Load<AudioClip>("Audio/SFX/14_human_death_spin") };
+        }
+        if (enemyDeath == null || (enemyDeath as AudioClip[])?.Length == 0)
+        {
+            enemyDeath = new AudioClip[] { Resources.Load<AudioClip>("Audio/SFX/24_orc_death_spin") };
+        }
     }
 
     private void OnDestroy()

@@ -19,6 +19,7 @@ MonoBehaviour:
   Width: 1
   Height: 1
   Icon: {fileID: 2899943770506906129, guid: fd366209c6a1c0d43be84bf882bbd2c1, type: 3}
+  itemColor: {r: 1, g: 0, b: 0, a: 1}
   Subtype: 0
   CustomShapeOffsets: []
   BaseCooldown: 3

@@ -16,11 +16,13 @@ public class ItemInstance : MonoBehaviour
     public float BonusDamageReduction { get; set; }
     public float CooldownMultiplier { get; set; } = 1.0f;
     public float CooldownTimer { get; set; }
+    public Color InstanceColor { get; private set; }
 
     public void Initialize(ItemDataSO data)
     {
         InstanceId = Guid.NewGuid().ToString();
         Data = data;
+        InstanceColor = data.itemColor;
         CooldownTimer = data.BaseCooldown;
     }
 
