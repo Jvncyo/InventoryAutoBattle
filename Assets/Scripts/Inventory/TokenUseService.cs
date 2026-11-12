@@ -72,8 +72,9 @@ public static class TokenUseService
                 token.CurrentContainer?.RemoveItem(token);
             }
 
+            var tokenGo = token.gameObject;
             EventBus.Publish(new TokenConsumedEvent(token, null));
-            Object.Destroy(token.gameObject);
+            Object.Destroy(tokenGo);
             CombatManager.Instance?.ResolveOutcome();
             return true;
         }
