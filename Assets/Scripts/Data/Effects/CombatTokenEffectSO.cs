@@ -8,6 +8,9 @@ public class CombatTokenEffectSO : TokenEffectSO
     public CombatTokenAction Action;
     [Min(0)] public float Amount = 10f;
 
+    [Header("Visual Effect")]
+    public GameObject EffectPrefab;
+
     public override bool ApplyToEquipment(ItemInstance targetEquipment) => false;
 
     public bool CanApply(CombatActor actor, out string message)
