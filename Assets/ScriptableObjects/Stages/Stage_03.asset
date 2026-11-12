@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StageDataSO
   StageNumber: 3
   BiomeName: Forest
-  backgroundPrefab: {fileID: 5581699115959886857, guid: 7fb5ac462ded842438e27c0df07844dc, type: 3}
+  backgroundPrefab: {fileID: 5581699115959886857, guid: bd2d46a178e456541b7401c5dea48da0, type: 3}
   commonEnemyPool:
   - {fileID: 11400000, guid: 79e3f4edbbc72aa4bb6df297e1b35236, type: 2}
   - {fileID: 11400000, guid: fd064c351366abf4292272369621df20, type: 2}

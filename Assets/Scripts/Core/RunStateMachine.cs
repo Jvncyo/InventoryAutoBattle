@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class RunStateMachine : MonoBehaviour
 {
@@ -30,6 +31,7 @@ public class RunStateMachine : MonoBehaviour
     public string SaveStatus { get; private set; } = "";
 
     private List<UnifiedRewardOption> _currentRewardOptions;
+    private GameObject _currentBackground;
 
     private void Awake()
     {
@@ -221,6 +223,7 @@ public class RunStateMachine : MonoBehaviour
         switch (next)
         {
             case RunState.Preparation:
+                UpdateStageBackground();
                 rewardManager?.ClearTokenTray();
                 combatManager?.PlayerActor?.ResetForNewWave();
 
@@ -266,6 +269,52 @@ public class RunStateMachine : MonoBehaviour
                 unifiedRewardUI?.Close();
                 break;
         }
+    }
+
+    private void UpdateStageBackground()
+    {
+        if (_currentBackground != null)
+        {
+            Destroy(_currentBackground);
+            _currentBackground = null;
+        }
+
+        // 배경을 위한 전용 Canvas 찾기 또는 생성
+        GameObject bgCanvasObj = GameObject.Find("BackgroundCanvas");
+        if (bgCanvasObj == null)
+        {
+            bgCanvasObj = new GameObject("BackgroundCanvas");
+            Canvas canvasComp = bgCanvasObj.AddComponent<Canvas>();
+            canvasComp.renderMode = RenderMode.ScreenSpaceCamera;
+            canvasComp.worldCamera = Camera.main;
+            canvasComp.planeDistance = 20; // 플레이어(0)보다 뒤쪽
+            canvasComp.sortingOrder = -10; // UI보다 뒤쪽
+
+            var scaler = bgCanvasObj.AddComponent<UnityEngine.UI.CanvasScaler>();
+            scaler.uiScaleMode = UnityEngine.UI.CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920, 1080);
+            scaler.matchWidthOrHeight = 0.5f;
+        }
+
+        var bgPrefab = stageProgressionManager?.GetCurrentBackgroundPrefab();
+        if (bgPrefab == null) return;
+
+        var bg = Instantiate(bgPrefab, bgCanvasObj.transform);
+        bg.name = "StageBackground";
+
+        var rt = bg.GetComponent<RectTransform>();
+        if (rt != null)
+        {
+            rt.anchorMin = Vector2.zero;
+            rt.anchorMax = Vector2.one;
+            rt.offsetMin = Vector2.zero;
+            rt.offsetMax = Vector2.zero;
+        }
+
+        var img = bg.GetComponent<Image>();
+        if (img != null) img.raycastTarget = false;
+
+        _currentBackground = bg;
     }
 
     private void GenerateAndShowUnifiedReward()

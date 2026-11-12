@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 58390074bc3d0e34089ce1c0c6034fc9, type: 3}
-  m_Name: Weapon_Scythe
+  m_Name: Weapon_Axe
   m_EditorClassIdentifier: Assembly-CSharp::ItemDataSO
-  Id: item_scythe
-  DisplayName: Scythe
+  Id: item_axe
+  DisplayName: Axe
   ItemType: 0
   Rarity: 3
   Width: 2
   Height: 3
-  Icon: {fileID: 0}
+  Icon: {fileID: 4638157690744355960, guid: f2f9c154e4a5c7d4aa6fce4d524dd0c1, type: 3}
   Subtype: 5
   CustomShapeOffsets:
   - {x: 0, y: 0}

@@ -18,7 +18,7 @@ MonoBehaviour:
   Rarity: 1
   Width: 2
   Height: 1
-  Icon: {fileID: 0}
+  Icon: {fileID: 9202361132051165479, guid: efb57030f4be9554c839e4147b1035c3, type: 3}
   Subtype: 6
   CustomShapeOffsets: []
   BaseCooldown: 30

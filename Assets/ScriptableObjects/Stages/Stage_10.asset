@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StageDataSO
   StageNumber: 10
   BiomeName: Boss Chamber
-  backgroundPrefab: {fileID: 5581699115959886857, guid: 7fb5ac462ded842438e27c0df07844dc, type: 3}
+  backgroundPrefab: {fileID: 5581699115959886857, guid: ea1fdd73f0d7a1341b9b4de33ad3a38e, type: 3}
   commonEnemyPool: []
   bossEnemy: {fileID: 11400000, guid: 2b2e70c788b678440a9654eaf292f242, type: 2}
   hpMultiplier: 1.5

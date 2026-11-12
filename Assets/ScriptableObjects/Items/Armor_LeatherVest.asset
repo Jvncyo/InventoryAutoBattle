@@ -18,8 +18,8 @@ MonoBehaviour:
   Rarity: 0
   Width: 2
   Height: 1
-  Icon: {fileID: 0}
-  Subtype: 1
+  Icon: {fileID: 6384185024454366596, guid: 4d5183ed94f052f43b7cd82de2bbed97, type: 3}
+  Subtype: 2
   CustomShapeOffsets: []
   BaseCooldown: 500
   BaseDamage: 0

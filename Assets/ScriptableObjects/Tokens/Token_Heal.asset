@@ -18,13 +18,14 @@ MonoBehaviour:
   Rarity: 0
   Width: 1
   Height: 1
-  Icon: {fileID: 0}
+  Icon: {fileID: 2899943770506906129, guid: fd366209c6a1c0d43be84bf882bbd2c1, type: 3}
   Subtype: 0
   CustomShapeOffsets: []
   BaseCooldown: 3
   BaseDamage: 0
   BaseShield: 0
   BaseHeal: 0
+  ShieldInitialOnly: 0
   BaseDamageReduction: 0
   Triggers: []
   AcceptableTokens: 
