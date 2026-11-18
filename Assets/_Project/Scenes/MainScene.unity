@@ -5500,6 +5500,7 @@ MonoBehaviour:
   retryButton: {fileID: 576724216}
   recoveryRetryButton: {fileID: 361965291}
   recoveryNewRunButton: {fileID: 1258225378}
+  quitButton: {fileID: -2110}
   stageText: {fileID: 855668740}
   freeCellsText: {fileID: 1942858217}
   playerHPText: {fileID: 1799790428}

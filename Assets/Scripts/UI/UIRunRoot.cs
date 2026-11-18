@@ -15,6 +15,7 @@ public class UIRunRoot : MonoBehaviour
     [SerializeField] private Button retryButton;
     [SerializeField] private Button recoveryRetryButton;
     [SerializeField] private Button recoveryNewRunButton;
+    [SerializeField] private Button quitButton;
 
     [Header("HUD")]
     [SerializeField] private Text stageText;
@@ -34,6 +35,7 @@ public class UIRunRoot : MonoBehaviour
     private Button boundRetryButton;
     private Button boundRecoveryRetryButton;
     private Button boundRecoveryNewRunButton;
+    private Button boundQuitButton;
 
     private void OnEnable()
     {
@@ -42,11 +44,13 @@ public class UIRunRoot : MonoBehaviour
         boundRetryButton = retryButton;
         boundRecoveryRetryButton = recoveryRetryButton;
         boundRecoveryNewRunButton = recoveryNewRunButton;
+        boundQuitButton = quitButton;
         if (boundStartButton != null) boundStartButton.onClick.AddListener(StartCombat);
         if (boundProceedButton != null) boundProceedButton.onClick.AddListener(Proceed);
         if (boundRetryButton != null) boundRetryButton.onClick.AddListener(Retry);
         if (boundRecoveryRetryButton != null) boundRecoveryRetryButton.onClick.AddListener(RecoveryRetry);
         if (boundRecoveryNewRunButton != null) boundRecoveryNewRunButton.onClick.AddListener(RecoveryNewRun);
+        if (boundQuitButton != null) boundQuitButton.onClick.AddListener(QuitGame);
         Refresh();
     }
 
@@ -57,11 +61,13 @@ public class UIRunRoot : MonoBehaviour
         if (boundRetryButton != null) boundRetryButton.onClick.RemoveListener(Retry);
         if (boundRecoveryRetryButton != null) boundRecoveryRetryButton.onClick.RemoveListener(RecoveryRetry);
         if (boundRecoveryNewRunButton != null) boundRecoveryNewRunButton.onClick.RemoveListener(RecoveryNewRun);
+        if (boundQuitButton != null) boundQuitButton.onClick.RemoveListener(QuitGame);
         boundStartButton = null;
         boundProceedButton = null;
         boundRetryButton = null;
         boundRecoveryRetryButton = null;
         boundRecoveryNewRunButton = null;
+        boundQuitButton = null;
     }
 
     private void LateUpdate()
@@ -107,6 +113,11 @@ public class UIRunRoot : MonoBehaviour
             machine.StartNewAfterRecovery();
     }
 
+    private void QuitGame()
+    {
+        Application.Quit();
+    }
+
     private void Refresh()
     {
         var machine = StateMachine;
@@ -122,6 +133,7 @@ public class UIRunRoot : MonoBehaviour
         SetButtonState(retryButton, gameOver && !recovery);
         SetButtonState(recoveryRetryButton, recovery);
         SetButtonState(recoveryNewRunButton, recovery);
+        SetButtonState(quitButton, true);
         if (gameOverPopup != null && gameOverPopup.activeSelf != (gameOver && !recovery))
             gameOverPopup.SetActive(gameOver && !recovery);
         if (recoveryPanel != null && recoveryPanel.activeSelf != recovery)
